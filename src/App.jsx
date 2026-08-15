@@ -253,7 +253,7 @@ const ModuleParametres = ({ onClose, themePref, setThemePref }) => {
   );
 };
 
-const ModuleIkhlas = () => {
+const ModuleIkhlas = ({ onOpenSettings }) => {
   const [step, setStep] = useState('welcome'); 
   const [intention, setIntention] = useState('');
   const [task, setTask] = useState('');
@@ -651,7 +651,7 @@ const defaultTimeline = [
 
 const Icons = { Sunrise, Sun, Clock, BookOpen, Sunset, Star };
 
-const ModuleIstiqamah = () => {
+const ModuleIstiqamah = ({ onOpenSettings }) => {
   const [timeline, setTimeline] = useLocalStorage('mindset_timeline', defaultTimeline);
   const [isAdding, setIsAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -707,7 +707,7 @@ const ModuleIstiqamah = () => {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7] relative">
       <div className="p-4 border-b border-[#e8dfce] shrink-0 bg-white relative flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <button onClick={() => setIsAdding(true)} className="p-2 bg-[#f5f0e6] text-[#8c6b4a] rounded-full hover:bg-[#e8dfce] transition-colors" title="Ajouter une habitude"><Plus size={18}/></button>
           {score > 0 && (
             <button onClick={resetTodayHabits} className="p-2 text-[#8c7b68] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Réinitialiser la journée">
@@ -721,13 +721,18 @@ const ModuleIstiqamah = () => {
           <h1 className="text-lg font-bold text-[#3e2f24]">Timeline Prophétique</h1>
         </div>
         
-        <div className="w-10 h-10 rounded-full border-4 border-[#e8dfce] flex items-center justify-center relative shrink-0">
-           <svg viewBox="0 0 36 36" className="absolute inset-0 w-full h-full -rotate-90">
-              <circle cx="18" cy="18" r="14" stroke="transparent" strokeWidth="3" fill="none" />
-              <circle cx="18" cy="18" r="14" stroke="#5e8c61" strokeWidth="3" fill="none" strokeDasharray="88" strokeDashoffset={88 - (progress / 100) * 88} className="transition-all duration-500" />
-           </svg>
-           <span className="font-sans font-bold text-[10px] text-[#3e2f24] relative z-10">{score}/{timeline.length}</span>
-         </div>
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <div className="w-9 h-9 rounded-full border-4 border-[#e8dfce] flex items-center justify-center relative shrink-0">
+             <svg viewBox="0 0 36 36" className="absolute inset-0 w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="14" stroke="transparent" strokeWidth="3" fill="none" />
+                <circle cx="18" cy="18" r="14" stroke="#5e8c61" strokeWidth="3" fill="none" strokeDasharray="88" strokeDashoffset={88 - (progress / 100) * 88} className="transition-all duration-500" />
+             </svg>
+             <span className="font-sans font-bold text-[9px] text-[#3e2f24] relative z-10">{score}/{timeline.length}</span>
+           </div>
+          <button onClick={onOpenSettings} className="p-1.5 text-[#8c7b68] hover:text-[#8c6b4a] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Paramètres">
+            <Settings size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 pb-8 relative">
@@ -822,7 +827,7 @@ const ModuleIstiqamah = () => {
   );
 };
 
-const ModuleMuhasabah = () => {
+const ModuleMuhasabah = ({ onOpenSettings }) => {
   const [step, setStep] = useLocalStorage('mindset_muhasabah_step', 'intro');
   const [currentVirtueIndex, setCurrentVirtueIndex] = useState(0);
   const [ratings, setRatings] = useLocalStorage('mindset_muhasabah_ratings', { hilm: 0, rifq: 0, sidq: 0, tawadu: 0 });
@@ -842,9 +847,17 @@ const ModuleMuhasabah = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7]">
-      <div className="p-4 border-b border-[#e8dfce] text-center shrink-0">
-        <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-1">Al-Muhasabah</p>
-        <h1 className="text-xl font-bold text-[#3e2f24]">Bilan du Caractère</h1>
+      <div className="p-4 border-b border-[#e8dfce] flex justify-between items-center shrink-0 bg-white">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-0.5">Al-Muhasabah</p>
+          <h1 className="text-xl font-bold text-[#3e2f24]">Bilan du Caractère</h1>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Scale size={20} className="text-[#8c6b4a]" />
+          <button onClick={onOpenSettings} className="p-1.5 text-[#8c7b68] hover:text-[#8c6b4a] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Paramètres">
+            <Settings size={18} />
+          </button>
+        </div>
       </div>
 
       {step === 'intro' && (
@@ -935,7 +948,7 @@ const islamicWisdoms = [
   { text: "Très certainement, Nous vous éprouverons par un peu de peur, de faim et de diminution de biens... Et fais la bonne annonce aux endurants.", source: "Coran (2:155)" }
 ];
 
-const ModuleSabr = () => {
+const ModuleSabr = ({ onOpenSettings }) => {
   const [step, setStep] = useLocalStorage('mindset_sabr_step', 'intro');
   const [obstacle, setObstacle] = useLocalStorage('mindset_sabr_obstacle', '');
   const [lesson, setLesson] = useLocalStorage('mindset_sabr_lesson', '');
@@ -972,10 +985,15 @@ const ModuleSabr = () => {
           <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-0.5">As-Sabr</p>
           <h1 className="text-xl font-bold text-[#3e2f24]">Plan vs Réalité</h1>
         </div>
-        <button onClick={() => setViewHistory(!viewHistory)} className={`p-2 rounded-xl border text-xs font-sans font-bold flex items-center space-x-1 transition-all ${viewHistory ? 'bg-[#8c6b4a] text-white border-[#8c6b4a]' : 'bg-[#f5f0e6] text-[#8c6b4a] border-[#e8dfce]'}`}>
-          <BookOpen size={14} />
-          <span>{viewHistory ? 'Formulaire' : 'Journal'} ({sabrHistory.length})</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <button onClick={() => setViewHistory(!viewHistory)} className={`p-2 rounded-xl border text-xs font-sans font-bold flex items-center space-x-1 transition-all ${viewHistory ? 'bg-[#8c6b4a] text-white border-[#8c6b4a]' : 'bg-[#f5f0e6] text-[#8c6b4a] border-[#e8dfce]'}`}>
+            <BookOpen size={14} />
+            <span>{viewHistory ? 'Formulaire' : 'Journal'} ({sabrHistory.length})</span>
+          </button>
+          <button onClick={onOpenSettings} className="p-1.5 text-[#8c7b68] hover:text-[#8c6b4a] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Paramètres">
+            <Settings size={18} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col p-5 h-full overflow-hidden">
@@ -1089,7 +1107,7 @@ const ModuleSabr = () => {
   );
 };
 
-const ModuleIhsan = () => {
+const ModuleIhsan = ({ onOpenSettings }) => {
   const [pillarActions, setPillars] = useLocalStorage('mindset_ihsan', { savoir: [], solidite: [], serenite: [], sourire: [] });
   const [active, setActive] = useState(null);
   const [newActionInput, setNewActionInput] = useState('');
@@ -1100,6 +1118,29 @@ const ModuleIhsan = () => {
     solidite: [{ text: "Le croyant fort est meilleur et plus aimé d'Allah que le croyant faible.", source: "Hadith (Mouslim)" }],
     serenite: [{ text: "N'est-ce point par l'évocation d'Allah que se tranquillisent les cœurs ?", source: "Coran (13:28)" }],
     sourire: [{ text: "Ton sourire vis-à-vis de ton frère est une aumône.", source: "Hadith (At-Tirmidhi)" }]
+  };
+
+  const guidedMissions = {
+    savoir: [
+      "📖 Lire 5 pages du Coran",
+      "🎧 Écouter 15 min de rappel / cours",
+      "✍️ Méditer 1 verset ou Hadith"
+    ],
+    solidite: [
+      "🏃 20 min d'exercice ou marche",
+      "🥗 Repas sain & équilibré",
+      "💧 Boire 1.5L d'eau aujourd'hui"
+    ],
+    serenite: [
+      "📿 5 min de Dhikr (SubhanAllah...)",
+      "🤲 Invocation sincère (Duaa)",
+      "📵 30 min sans réseaux sociaux"
+    ],
+    sourire: [
+      "😊 Sourire & saluer 3 personnes",
+      "💬 Message bienveillant à un proche",
+      "🤝 Rendre un service ou aumône"
+    ]
   };
 
   const data = {
@@ -1145,7 +1186,7 @@ const ModuleIhsan = () => {
            <span className="font-sans font-bold uppercase tracking-widest text-[10px] text-[#a99c8f] ml-4 flex-1 text-center pr-6">Action</span>
         </div>
         
-        <div className="flex-1 flex flex-col p-5 h-full overflow-hidden">
+        <div className="flex-1 flex flex-col p-5 h-full overflow-y-auto">
           <div className="flex flex-col items-center mb-4 shrink-0">
             <div className={`w-16 h-16 rounded-full ${p.bg} flex items-center justify-center mb-2 shadow-sm`}><p.icon size={28} className={p.color} /></div>
             <h2 className="text-xl font-bold text-[#3e2f24]">{p.name}</h2>
@@ -1156,16 +1197,32 @@ const ModuleIhsan = () => {
              <p className="text-[9px] font-sans text-[#a99c8f] uppercase font-bold tracking-wider">— {activeQuote.source}</p>
           </div>
 
+          <div className="mb-4 shrink-0">
+            <p className="text-[10px] font-sans font-bold uppercase text-[#8c6b4a] tracking-wider mb-2">💡 Missions suggérées pour débutants</p>
+            <div className="flex flex-col space-y-1.5">
+              {guidedMissions[active]?.map((mission, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => setPillars(prev => ({ ...prev, [active]: [...prev[active], mission] }))}
+                  className="text-left bg-white hover:bg-[#f5f0e6] border border-[#e8dfce] p-2.5 rounded-xl text-xs text-[#3e2f24] font-sans font-medium transition-all flex items-center justify-between group shadow-sm active:scale-98"
+                >
+                  <span>{mission}</span>
+                  <Plus size={14} className="text-[#8c6b4a] opacity-70 group-hover:opacity-100 shrink-0 ml-2" />
+                </button>
+              ))}
+            </div>
+          </div>
+
           <form onSubmit={handleAddAction} className="mb-4 shrink-0">
             <div className="flex space-x-2">
-              <input type="text" value={newActionInput} onChange={(e) => setNewActionInput(e.target.value)} placeholder="Action accomplie..." className="flex-1 bg-[#f5f0e6] border border-[#e8dfce] rounded-xl px-4 py-2 text-sm text-[#4a3f35] outline-none focus:border-[#8c6b4a]" />
+              <input type="text" value={newActionInput} onChange={(e) => setNewActionInput(e.target.value)} placeholder="Ajouter une action personnalisée..." className="flex-1 bg-[#f5f0e6] border border-[#e8dfce] rounded-xl px-4 py-2.5 text-sm text-[#4a3f35] outline-none focus:border-[#8c6b4a]" />
               <button type="submit" disabled={!newActionInput.trim()} className="bg-[#8c6b4a] disabled:bg-[#d4c8b8] text-white px-4 rounded-xl"><Plus size={18} /></button>
             </div>
           </form>
 
-          <div className="flex-1 overflow-y-auto mb-4 bg-white rounded-xl p-2 border border-[#e8dfce]">
+          <div className="min-h-[120px] mb-4 bg-white rounded-xl p-2 border border-[#e8dfce]">
              {actions.length === 0 ? (
-               <p className="text-center text-xs text-[#8c7b68] italic p-4 mt-2">Aucune action enregistrée aujourd'hui.</p>
+               <p className="text-center text-xs text-[#8c7b68] italic p-4 mt-2">Aucune action enregistrée aujourd'hui. Cliquez sur une mission ci-dessus pour commencer !</p>
              ) : (
                <ul className="space-y-2">
                  {actions.map((act, idx) => (
@@ -1178,7 +1235,7 @@ const ModuleIhsan = () => {
              )}
           </div>
           
-          <div className="shrink-0 mt-auto">
+          <div className="shrink-0 mt-auto pt-2">
             <div className="flex justify-between items-center mb-1">
               <span className="text-[10px] font-sans text-[#a99c8f] font-bold uppercase">Score</span>
               <span className="text-[10px] font-sans text-[#8c6b4a] font-bold">{score}/3</span>
@@ -1199,7 +1256,12 @@ const ModuleIhsan = () => {
           <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold">Al-Ihsan</p>
           <h1 className="text-xl font-bold text-[#3e2f24]">Mon Équilibre</h1>
         </div>
-        <Award size={24} className="text-[#8c6b4a]" />
+        <div className="flex items-center space-x-2">
+          <Award size={20} className="text-[#8c6b4a]" />
+          <button onClick={onOpenSettings} className="p-1.5 text-[#8c7b68] hover:text-[#8c6b4a] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Paramètres">
+            <Settings size={18} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col p-4 justify-between overflow-y-auto">
@@ -1396,7 +1458,7 @@ const masaAdhkar = [
   }
 ];
 
-const ModuleAdhkar = () => {
+const ModuleAdhkar = ({ onOpenSettings }) => {
   const [tab, setTab] = useState('sabah');
   const [counts, setCounts] = useLocalStorage('mindset_hisn_counts', {});
   const [selectedDua, setSelectedDua] = useState(null);
@@ -1421,7 +1483,12 @@ const ModuleAdhkar = () => {
             <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold">Hisn al-Muslim</p>
             <h1 className="text-xl font-bold text-[#3e2f24]">Adhkar Matin & Soir</h1>
           </div>
-          <Sparkles size={20} className="text-[#b08d57]" />
+          <div className="flex items-center space-x-2">
+            <Sparkles size={20} className="text-[#b08d57]" />
+            <button onClick={onOpenSettings} className="p-1.5 text-[#8c7b68] hover:text-[#8c6b4a] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Paramètres">
+              <Settings size={18} />
+            </button>
+          </div>
         </div>
         <div className="flex bg-[#f5f0e6] p-1 rounded-xl">
           <button onClick={() => setTab('sabah')} className={`flex-1 py-2 text-xs font-sans font-bold rounded-lg transition-all ${tab === 'sabah' ? 'bg-[#8c6b4a] text-white shadow-sm' : 'text-[#8c7b68]'}`}>Adhkar du Matin</button>
@@ -1574,13 +1641,13 @@ const App = () => {
 
   const renderModule = () => {
     switch (activeTab) {
-      case 'ikhlas': return <ModuleIkhlas />;
-      case 'istiqamah': return <ModuleIstiqamah />;
-      case 'ihsan': return <ModuleIhsan />;
-      case 'muhasabah': return <ModuleMuhasabah />;
-      case 'sabr': return <ModuleSabr />;
-      case 'adhkar': return <ModuleAdhkar />;
-      default: return <ModuleIhsan />;
+      case 'ikhlas': return <ModuleIkhlas onOpenSettings={() => setIsSettingsOpen(true)} />;
+      case 'istiqamah': return <ModuleIstiqamah onOpenSettings={() => setIsSettingsOpen(true)} />;
+      case 'ihsan': return <ModuleIhsan onOpenSettings={() => setIsSettingsOpen(true)} />;
+      case 'muhasabah': return <ModuleMuhasabah onOpenSettings={() => setIsSettingsOpen(true)} />;
+      case 'sabr': return <ModuleSabr onOpenSettings={() => setIsSettingsOpen(true)} />;
+      case 'adhkar': return <ModuleAdhkar onOpenSettings={() => setIsSettingsOpen(true)} />;
+      default: return <ModuleIhsan onOpenSettings={() => setIsSettingsOpen(true)} />;
     }
   };
 
@@ -1611,13 +1678,6 @@ const App = () => {
       `}</style>
 
       <div className="bg-[#fdfbf7] w-full max-w-md sm:rounded-[2.5rem] shadow-2xl overflow-hidden border-0 sm:border-4 border-[#e8dfce] relative h-full sm:h-[850px] sm:max-h-[95vh] flex flex-col">
-        
-        <button 
-          onClick={() => setIsSettingsOpen(true)}
-          className="absolute top-4 right-4 z-40 p-2 text-[#8c7b68] bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-[#e8dfce] hover:text-[#8c6b4a] transition-colors"
-        >
-          <Settings size={18} />
-        </button>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-[#fdfbf7]">
           {renderModule()}
