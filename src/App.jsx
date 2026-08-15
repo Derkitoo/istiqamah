@@ -5,7 +5,8 @@ import {
   Shield, Heart, Scale, Feather, RefreshCcw, 
   Mountain, Anchor, Sun, Waves, Dumbbell, Smile, ArrowLeft, Plus, Award,
   Target, Activity, Compass, LayoutDashboard, Settings, Moon, Smartphone, Trash2, Bell, ArrowUpCircle, Edit3, ListChecks,
-  Sunrise, Sunset, Star, CloudSun, Check, Download, Calendar, BarChart2, TrendingUp, Sparkles, CheckSquare, Minus
+  Sunrise, Sunset, Star, CloudSun, Check, Download, Calendar, BarChart2, TrendingUp, Sparkles, CheckSquare, Minus,
+  Zap, Coffee, Volume2, Pause, Play
 } from 'lucide-react';
 
 const playChime = () => {
@@ -221,9 +222,26 @@ const ModuleIkhlas = () => {
   const [intention, setIntention] = useState('');
   const [task, setTask] = useState('');
   const [streak, setStreak] = useLocalStorage('mindset_ikhlas_streak', 0);
+  const [totalFocusSeconds, setTotalFocusSeconds] = useLocalStorage('mindset_focus_today_seconds', 0);
+  
+  const [mode, setMode] = useState('sprint'); // 'sprint' (25m), 'deep' (50m), 'custom'
   const [duration, setDuration] = useState(25);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
+  const [isBreak, setIsBreak] = useState(false);
+
+  // Ambiances sonores via Web Audio API (100% offline & sans fichiers externes)
+  const [ambientSound, setAmbientSound] = useState('off'); // 'off', 'rain', 'waves'
+  const audioContextRef = useRef(null);
+  const soundNodesRef = useRef(null);
+
+  // Pensées parasites (Distraction dump)
+  const [distractions, setDistractions] = useState([]);
+  const [showDistractionInput, setShowDistractionInput] = useState(false);
+  const [newDistraction, setNewDistraction] = useState('');
+
+  // Bilan de sincérité post-focus
+  const [sincerityRating, setSincerityRating] = useState(null);
 
   const intentionSuggestions = [
     "Plaire à Allah par l'excellence",
@@ -237,18 +255,93 @@ const ModuleIkhlas = () => {
     "Fais de ton mieux et place ta confiance en Allah. — Sagesse"
   ];
 
+  const breakTips = [
+    "Bois un grand verre d'eau et prends 3 profondes respirations.",
+    "Fais quelques étirements légers et repose tes yeux loin des écrans.",
+    "Répète doucement : 'SubhanAllah wa bihamdihi, SubhanAllah al-'Azim'."
+  ];
+
+  // Gestion de l'ambiance sonore (Web Audio API)
+  useEffect(() => {
+    if (ambientSound === 'off' || !isActive) {
+      if (soundNodesRef.current) {
+        try { soundNodesRef.current.source.stop(); } catch(e){}
+        try { soundNodesRef.current.ctx.close(); } catch(e){}
+        soundNodesRef.current = null;
+      }
+      return;
+    }
+
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      if (ambientSound === 'rain') {
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+      } else {
+        filter.type = 'bandpass';
+        filter.frequency.value = 400;
+        filter.Q.value = 3;
+      }
+
+      const gainNode = ctx.createGain();
+      gainNode.gain.setValueAtTime(ambientSound === 'rain' ? 0.05 : 0.03, ctx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      whiteNoise.start();
+      soundNodesRef.current = { ctx, source: whiteNoise, gain: gainNode };
+    } catch (e) {
+      console.warn("Audio d'ambiance non disponible", e);
+    }
+
+    return () => {
+      if (soundNodesRef.current) {
+        try { soundNodesRef.current.source.stop(); } catch(e){}
+        try { soundNodesRef.current.ctx.close(); } catch(e){}
+        soundNodesRef.current = null;
+      }
+    };
+  }, [ambientSound, isActive]);
+
+  // Décompte du chrono
   useEffect(() => {
     let interval = null;
     if (isActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+        if (!isBreak) {
+          setTotalFocusSeconds((prev) => (prev || 0) + 1);
+        }
+      }, 1000);
     } else if (timeLeft === 0 && isActive) {
       playChime(); 
       setIsActive(false);
-      setStep('success');
-      setStreak((prev) => prev + 1);
+      if (!isBreak) {
+        setStep('success');
+        setStreak((prev) => prev + 1);
+      } else {
+        setIsBreak(false);
+        setStep('welcome');
+      }
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, setStreak]);
+  }, [isActive, timeLeft, isBreak, setStreak, setTotalFocusSeconds]);
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
@@ -256,104 +349,260 @@ const ModuleIkhlas = () => {
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const startTimer = (mins) => {
+  const startTimer = (mins, modeType = 'custom') => {
+    setMode(modeType);
     setDuration(mins);
     setTimeLeft(mins * 60);
   };
 
+  const handleAddDistraction = (e) => {
+    e.preventDefault();
+    if (!newDistraction.trim()) return;
+    setDistractions((prev) => [...prev, newDistraction.trim()]);
+    setNewDistraction('');
+    setShowDistractionInput(false);
+  };
+
+  const startBreak = (mins = 5) => {
+    setIsBreak(true);
+    setTimeLeft(mins * 60);
+    setDuration(mins);
+    setStep('focus');
+    setIsActive(true);
+  };
+
+  const totalMinutesToday = Math.floor((totalFocusSeconds || 0) / 60);
+  const totalSeconds = duration * 60;
+  const progressPercent = totalSeconds > 0 ? ((totalSeconds - timeLeft) / totalSeconds) * 100 : 0;
+  const strokeDashoffset = 440 - (progressPercent / 100) * 440;
+
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden p-4 sm:p-6 relative">
-      <div className="absolute top-4 left-4 flex items-center space-x-2 text-[#b08d57] z-10">
-        <Flame size={16} className={streak > 0 ? "text-orange-500 fill-orange-500" : ""} />
-        <span className="font-semibold text-[10px] tracking-widest uppercase">Série : {streak} J</span>
+    <div className="flex-1 flex flex-col h-full overflow-hidden p-4 sm:p-6 relative bg-[#fdfbf7]">
+      <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-[#b08d57] z-10">
+        <div className="flex items-center space-x-2">
+          <Flame size={16} className={streak > 0 ? "text-orange-500 fill-orange-500" : ""} />
+          <span className="font-semibold text-[10px] tracking-widest uppercase">Série : {streak} J</span>
+        </div>
+        <div className="flex items-center space-x-1 text-[10px] font-sans font-bold text-[#8c7b68] bg-[#f5f0e6] px-2.5 py-1 rounded-full border border-[#e8dfce]">
+          <Clock size={12} className="text-[#8c6b4a]" />
+          <span>Aujourd'hui : {totalMinutesToday} min</span>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col justify-between items-center w-full max-w-sm mx-auto h-full pt-8 pb-4">
+        
+        {/* ÉTAPE 1 : WELCOME */}
         {step === 'welcome' && (
           <div className="w-full flex-1 flex flex-col items-center justify-center space-y-6 animate-fade-in">
-            <BookOpen size={40} className="text-[#b08d57]" strokeWidth={1.5} />
-            <h1 className="text-2xl font-bold text-[#3e2f24] tracking-wide">Al-Ikhlas</h1>
-            <div className="bg-[#f5f0e6] p-4 rounded-2xl border border-[#e8dfce]">
-              <p className="text-sm italic text-[#6b5a48] leading-relaxed mb-2">« Certes, les actions ne valent que par leurs intentions... »</p>
-              <p className="text-[10px] text-[#8c7b68] font-sans uppercase tracking-widest">- Al-Boukhari & Mouslim -</p>
+            <div className="w-16 h-16 rounded-full bg-[#f5f0e6] border-2 border-[#e8dfce] flex items-center justify-center shadow-sm">
+              <BookOpen size={32} className="text-[#b08d57]" strokeWidth={1.5} />
             </div>
-            <button onClick={() => setStep('niyyah')} className="w-full bg-[#8c6b4a] hover:bg-[#7a5c3f] text-white py-3.5 rounded-xl flex justify-center items-center space-x-2 font-sans font-medium mt-auto">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-[#3e2f24] tracking-wide">Al-Ikhlas</h1>
+              <p className="text-xs text-[#8c7b68] mt-1 font-sans">Focus profond & Purification de l'intention</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-2xl border border-[#e8dfce] shadow-sm text-center">
+              <p className="text-sm italic text-[#6b5a48] leading-relaxed mb-2">« Certes, les actions ne valent que par leurs intentions... »</p>
+              <p className="text-[10px] text-[#8c7b68] font-sans uppercase tracking-widest font-bold">- Al-Boukhari & Mouslim -</p>
+            </div>
+
+            <button onClick={() => setStep('niyyah')} className="w-full bg-[#8c6b4a] hover:bg-[#7a5c3f] text-white py-3.5 rounded-xl flex justify-center items-center space-x-2 font-sans font-medium mt-auto transition-colors shadow-sm">
               <span>Poser mon intention</span> <ArrowRight size={18} />
             </button>
           </div>
         )}
 
+        {/* ÉTAPE 2 : NIYYAH */}
         {step === 'niyyah' && (
           <div className="w-full flex-1 flex flex-col animate-fade-in h-full">
             <div className="text-center mb-3 shrink-0">
               <h2 className="text-xl font-bold text-[#3e2f24] mb-1">Ta Niyyah du Jour</h2>
-              <p className="text-[#6b5a48] text-xs">Pourquoi fais-tu les choses aujourd'hui ?</p>
+              <p className="text-[#6b5a48] text-xs">Pourquoi fais-tu cette action aujourd'hui ?</p>
             </div>
+            
             <div className="flex flex-wrap gap-2 justify-center mb-3 shrink-0">
               {intentionSuggestions.map((sug, idx) => (
-                <button key={idx} onClick={() => setIntention(sug)} className="bg-[#f5f0e6] hover:bg-[#e8dfce] text-[#6b5a48] text-[10px] px-3 py-1.5 rounded-full border border-[#e8dfce]">{sug}</button>
+                <button key={idx} onClick={() => setIntention(sug)} className="bg-[#f5f0e6] hover:bg-[#e8dfce] text-[#6b5a48] text-[10px] px-3 py-1.5 rounded-full border border-[#e8dfce] transition-colors">{sug}</button>
               ))}
             </div>
+
             <textarea value={intention} onChange={(e) => setIntention(e.target.value)} placeholder="Écris ton intention personnelle ici..." className="w-full flex-1 bg-[#fdfbf7] border-2 border-[#e8dfce] rounded-xl p-4 text-[#4a3f35] focus:border-[#b08d57] resize-none font-sans outline-none text-sm shadow-inner mb-3" />
+            
             <button onClick={() => setIntention(focusWisdoms[Math.floor(Math.random() * focusWisdoms.length)])} className="mb-3 text-[10px] text-[#8c6b4a] font-sans font-bold flex items-center justify-center space-x-1 hover:underline">
               <Sparkles size={12} /> <span>Piocher une sagesse d'intention</span>
             </button>
+
             <button onClick={() => setStep('task')} disabled={!intention.trim()} className="w-full shrink-0 bg-[#8c6b4a] hover:bg-[#7a5c3f] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl font-sans font-medium transition-colors">Continuer</button>
           </div>
         )}
 
+        {/* ÉTAPE 3 : MODE & TÂCHE PRIO */}
         {step === 'task' && (
           <div className="w-full flex-1 flex flex-col animate-fade-in text-center h-full">
-            <div className="shrink-0 mb-4">
-              <Search size={32} className="text-[#b08d57] mx-auto mb-2" strokeWidth={1.5} />
+            <div className="shrink-0 mb-3">
+              <Target size={32} className="text-[#b08d57] mx-auto mb-2" strokeWidth={1.5} />
               <h2 className="text-xl font-bold text-[#3e2f24] mb-1">La Loi du Focus</h2>
-              <p className="text-[#6b5a48] text-xs">Concentre ton énergie sur <b>une seule chose</b>.</p>
+              <p className="text-[#6b5a48] text-xs">Quelle est ton unique priorité pour cette session ?</p>
             </div>
-            <input type="text" value={task} onChange={(e) => setTask(e.target.value)} placeholder="Quelle est ton unique priorité ?" className="w-full shrink-0 bg-[#fdfbf7] border-2 border-[#e8dfce] rounded-xl p-4 text-[#4a3f35] focus:border-[#b08d57] font-sans text-center outline-none text-sm shadow-inner mb-6" />
-            <div className="space-y-3 shrink-0 mb-auto">
-              <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase tracking-wider">Durée de la session</p>
-              <div className="flex justify-center space-x-2">
-                {[15, 25, 50].map((mins) => (
-                  <button key={mins} onClick={() => startTimer(mins)} className={`px-4 py-2 rounded-lg font-sans text-sm font-medium transition-colors border-2 ${duration === mins ? 'border-[#8c6b4a] bg-[#8c6b4a] text-white' : 'border-[#e8dfce] bg-[#f5f0e6] text-[#6b5a48]'}`}>{mins}m</button>
+
+            <input type="text" value={task} onChange={(e) => setTask(e.target.value)} placeholder="Tâche prioritaire..." className="w-full shrink-0 bg-[#fdfbf7] border-2 border-[#e8dfce] rounded-xl p-3.5 text-[#4a3f35] focus:border-[#b08d57] font-sans text-center outline-none text-sm shadow-inner mb-4" />
+
+            <div className="space-y-3 shrink-0 mb-auto w-full">
+              <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase tracking-wider">Mode de Session</p>
+              
+              <div className="grid grid-cols-3 gap-2">
+                <button onClick={() => startTimer(25, 'sprint')} className={`p-3 rounded-xl border flex flex-col items-center space-y-1 transition-all ${mode === 'sprint' ? 'bg-[#8c6b4a] border-[#8c6b4a] text-white' : 'bg-white border-[#e8dfce] text-[#6b5a48]'}`}>
+                  <Zap size={16} />
+                  <span className="font-sans font-bold text-xs">Sprint</span>
+                  <span className="text-[9px] opacity-80">25 min</span>
+                </button>
+
+                <button onClick={() => startTimer(50, 'deep')} className={`p-3 rounded-xl border flex flex-col items-center space-y-1 transition-all ${mode === 'deep' ? 'bg-[#8c6b4a] border-[#8c6b4a] text-white' : 'bg-white border-[#e8dfce] text-[#6b5a48]'}`}>
+                  <Waves size={16} />
+                  <span className="font-sans font-bold text-xs">Deep Work</span>
+                  <span className="text-[9px] opacity-80">50 min</span>
+                </button>
+
+                <button onClick={() => startTimer(15, 'custom')} className={`p-3 rounded-xl border flex flex-col items-center space-y-1 transition-all ${mode === 'custom' ? 'bg-[#8c6b4a] border-[#8c6b4a] text-white' : 'bg-white border-[#e8dfce] text-[#6b5a48]'}`}>
+                  <Clock size={16} />
+                  <span className="font-sans font-bold text-xs">Libre</span>
+                  <span className="text-[9px] opacity-80">15 min</span>
+                </button>
+              </div>
+
+              {mode === 'custom' && (
+                <div className="flex justify-center space-x-2 pt-1">
+                  {[15, 30, 45, 60].map((mins) => (
+                    <button key={mins} onClick={() => startTimer(mins, 'custom')} className={`px-3 py-1.5 rounded-lg font-sans text-xs font-medium border ${duration === mins ? 'border-[#8c6b4a] bg-[#f5f0e6] text-[#8c6b4a] font-bold' : 'border-[#e8dfce] text-[#8c7b68]'}`}>{mins}m</button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button onClick={() => setStep('focus')} disabled={!task.trim()} className="w-full shrink-0 bg-[#8c6b4a] hover:bg-[#7a5c3f] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl flex justify-center items-center space-x-2 font-sans font-medium transition-colors mt-4 shadow-sm">
+              <span>Entrer en Focus Khushû'</span> <Flame size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* ÉTAPE 4 : FOCUS KHUSHÛ' (TIMER + PARASITES + SOUNDS) */}
+        {step === 'focus' && (
+          <div className="w-full flex-1 flex flex-col items-center justify-between animate-fade-in h-full py-2">
+            
+            {/* Header Niyyah */}
+            <div className="w-full bg-white p-3.5 rounded-2xl border border-[#e8dfce] border-l-4 border-l-[#b08d57] text-left shrink-0 shadow-sm relative">
+              <div className="flex justify-between items-center mb-0.5">
+                <p className="text-[9px] uppercase tracking-widest text-[#8c7b68] font-sans font-bold">{isBreak ? 'Pause Régénératrice' : 'Niyyah en cours'}</p>
+                <div className="flex items-center space-x-1">
+                  {/* Selecteur d'Ambiance sonore */}
+                  <button onClick={() => setAmbientSound(prev => prev === 'off' ? 'rain' : prev === 'rain' ? 'waves' : 'off')} className={`p-1 rounded-md border text-[9px] font-sans font-bold flex items-center space-x-1 transition-all ${ambientSound !== 'off' ? 'bg-[#f5f0e6] border-[#8c6b4a] text-[#8c6b4a]' : 'bg-white border-[#e8dfce] text-[#8c7b68]'}`} title="Ambiance sonore">
+                    <Volume2 size={12} />
+                    <span>{ambientSound === 'rain' ? 'Pluie' : ambientSound === 'waves' ? 'Vagues' : 'Muet'}</span>
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs italic text-[#4a3f35] line-clamp-1">{isBreak ? breakTips[Math.floor(Math.random() * breakTips.length)] : `« ${intention} »`}</p>
+            </div>
+
+            {/* Minuteur Circulaire SVG */}
+            <div className="relative w-48 h-48 flex items-center justify-center my-auto shrink-0">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle cx="96" cy="96" r="70" stroke="#f2efe9" strokeWidth="8" fill="none" />
+                <circle cx="96" cy="96" r="70" stroke={isBreak ? '#5e8c61' : '#8c6b4a'} strokeWidth="8" fill="none" strokeDasharray="440" strokeDashoffset={strokeDashoffset} strokeLinecap="round" className="transition-all duration-1000 ease-linear" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-xs font-sans font-bold text-[#8c7b68] max-w-[120px] truncate mb-1">{isBreak ? 'PAUSE' : task}</span>
+                <span className="text-4xl font-sans font-light tracking-tighter text-[#2a1f18]">{formatTime(timeLeft)}</span>
+                <span className="text-[10px] font-sans text-[#a99c8f] font-bold uppercase mt-1">{Math.round(progressPercent)}%</span>
+              </div>
+            </div>
+
+            {/* Boîte à pensées parasites (Distraction dump) */}
+            {!isBreak && (
+              <div className="w-full shrink-0 mb-3">
+                {showDistractionInput ? (
+                  <form onSubmit={handleAddDistraction} className="flex space-x-2 animate-fade-in">
+                    <input type="text" value={newDistraction} onChange={(e) => setNewDistraction(e.target.value)} placeholder="Une pensée parasite ? Dépose-la ici..." autoFocus className="flex-1 bg-white border border-[#b08d57] rounded-xl px-3 py-2 text-xs text-[#4a3f35] outline-none font-sans shadow-sm" />
+                    <button type="submit" className="bg-[#8c6b4a] text-white text-xs px-3 rounded-xl font-sans font-bold">Sauver</button>
+                    <button type="button" onClick={() => setShowDistractionInput(false)} className="text-[#8c7b68] text-xs px-2">X</button>
+                  </form>
+                ) : (
+                  <div className="flex justify-between items-center bg-[#f5f0e6]/60 border border-[#e8dfce] px-3 py-2 rounded-xl text-xs">
+                    <span className="text-[10px] font-sans font-medium text-[#8c7b68]">
+                      {distractions.length === 0 ? 'Pensées parasites ? Mets-les de côté.' : `${distractions.length} pensée(s) mise(s) de côté.`}
+                    </span>
+                    <button onClick={() => setShowDistractionInput(true)} className="text-[10px] font-sans font-bold text-[#8c6b4a] bg-white border border-[#e8dfce] px-2 py-1 rounded-lg hover:bg-[#f5f0e6]">
+                      + Note rapide
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Boutons d'action */}
+            <div className="w-full shrink-0 flex space-x-2">
+              <button onClick={() => setIsActive(!isActive)} className={`flex-1 py-3.5 rounded-xl font-sans font-medium text-white flex justify-center items-center space-x-2 transition-colors shadow-sm ${isActive ? 'bg-[#c25e5e]' : 'bg-[#8c6b4a]'}`}>
+                {isActive ? <Pause size={16} /> : <Play size={16} />}
+                <span>{isActive ? 'Mettre en pause' : 'Démarrer'}</span>
+              </button>
+              {isActive && (
+                <button onClick={() => { playChime(); setIsActive(false); setStep('success'); }} className="p-3 bg-white border border-[#e8dfce] text-[#8c7b68] rounded-xl hover:bg-[#f5f0e6]" title="Terminer maintenant">
+                  <CheckCircle size={20} className="text-[#5e8c61]" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ÉTAPE 5 : SUCCESS & BILAN DE SINCÉRITÉ */}
+        {step === 'success' && (
+          <div className="w-full flex-1 flex flex-col items-center justify-between text-center animate-fade-in py-2">
+            <div className="shrink-0 my-auto pt-4">
+              <div className="w-16 h-16 rounded-full bg-[#f4f9f5] border-2 border-[#5e8c61] flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <CheckCircle size={36} className="text-[#5e8c61]" strokeWidth={1.5} />
+              </div>
+              <h2 className="text-2xl font-bold text-[#3e2f24]">Alhamdulillah</h2>
+              <p className="text-[#6b5a48] text-xs italic mt-1 font-serif">« Louange à Allah par la grâce de Qui s'accomplissent les bonnes œuvres. »</p>
+            </div>
+
+            {/* Sincérité check-in */}
+            <div className="w-full bg-white p-4 rounded-2xl border border-[#e8dfce] shadow-sm text-left my-3 shrink-0 space-y-2">
+              <p className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8c6b4a]">Bilan de Sincérité (Niyyah)</p>
+              <p className="text-xs text-[#4a3f35]">As-tu réussi à préserver ton intention initiale ?</p>
+              <div className="grid grid-cols-3 gap-1.5 pt-1">
+                {['Pleine', 'Moyenne', 'Difficile'].map((lvl) => (
+                  <button key={lvl} onClick={() => setSincerityRating(lvl)} className={`py-1.5 rounded-lg border text-[10px] font-sans font-bold transition-all ${sincerityRating === lvl ? 'bg-[#8c6b4a] text-white border-[#8c6b4a]' : 'bg-[#fdfbf7] text-[#6b5a48] border-[#e8dfce]'}`}>{lvl}</button>
                 ))}
               </div>
             </div>
-            <button onClick={() => setStep('focus')} disabled={!task.trim()} className="w-full shrink-0 bg-[#8c6b4a] hover:bg-[#7a5c3f] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl flex justify-center items-center space-x-2 font-sans font-medium transition-colors mt-4">
-              <span>Allumer la flamme</span> <Flame size={16} />
-            </button>
-          </div>
-        )}
 
-        {step === 'focus' && (
-          <div className="w-full flex-1 flex flex-col items-center justify-between animate-fade-in h-full py-4">
-            <div className="w-full bg-[#f5f0e6] p-4 rounded-xl border border-[#e8dfce] border-l-4 border-l-[#b08d57] text-left shrink-0">
-              <p className="text-[10px] uppercase tracking-widest text-[#8c7b68] mb-1 font-sans font-bold">Ton intention</p>
-              <p className="text-sm italic text-[#4a3f35] line-clamp-2">« {intention} »</p>
-            </div>
-            <div className="text-center flex-1 flex flex-col justify-center">
-              <h3 className="text-lg font-bold text-[#3e2f24] mb-2 px-2 line-clamp-2">{task}</h3>
-              <div className="text-6xl font-sans font-light tracking-tighter text-[#2a1f18] py-2">{formatTime(timeLeft)}</div>
-            </div>
-            <button onClick={() => setIsActive(!isActive)} className={`w-full shrink-0 py-3.5 rounded-xl font-sans font-medium text-white flex justify-center items-center space-x-2 transition-colors ${isActive ? 'bg-[#c25e5e]' : 'bg-[#8c6b4a]'}`}>
-              <Clock size={16} /> <span>{isActive ? 'Mettre en pause' : 'Commencer le Focus'}</span>
-            </button>
-          </div>
-        )}
+            {/* Liste des pensées mises de côté */}
+            {distractions.length > 0 && (
+              <div className="w-full bg-[#f5f0e6] p-3 rounded-xl border border-[#e8dfce] text-left text-xs mb-3 shrink-0">
+                <p className="text-[10px] font-sans font-bold uppercase text-[#8c7b68] mb-1">Pensées mises de côté ({distractions.length}) :</p>
+                <ul className="list-disc list-inside space-y-0.5 text-[#4a3f35] font-sans">
+                  {distractions.map((d, i) => <li key={i}>{d}</li>)}
+                </ul>
+              </div>
+            )}
 
-        {step === 'success' && (
-          <div className="w-full flex-1 flex flex-col items-center justify-center text-center animate-fade-in">
-            <CheckCircle size={56} className="text-[#5e8c61] mb-2" strokeWidth={1.5} />
-            <h2 className="text-2xl font-bold text-[#3e2f24]">Alhamdulillah</h2>
-            <p className="text-[#6b5a48] text-sm">Tâche accomplie avec concentration.</p>
-            <button onClick={() => {setStep('welcome'); setIntention(''); setTask(''); setTimeLeft(25 * 60); setIsActive(false);}} className="w-full border-2 border-[#8c6b4a] text-[#8c6b4a] py-3.5 rounded-xl font-sans font-medium flex justify-center items-center space-x-2 mt-8">
-              <RefreshCw size={16} /> <span>Nouvelle session</span>
-            </button>
+            <div className="w-full shrink-0 space-y-2 pt-2">
+              <button onClick={() => startBreak(5)} className="w-full bg-[#f5f0e6] hover:bg-[#e8dfce] border border-[#e8dfce] text-[#8c6b4a] py-3 rounded-xl font-sans font-medium text-xs flex justify-center items-center space-x-2 transition-colors">
+                <Coffee size={14} /> <span>Prendre 5 min de pause régénératrice</span>
+              </button>
+
+              <button onClick={() => { setStep('welcome'); setIntention(''); setTask(''); setTimeLeft(25 * 60); setIsActive(false); setDistractions([]); setSincerityRating(null); }} className="w-full bg-[#8c6b4a] hover:bg-[#7a5c3f] text-white py-3.5 rounded-xl font-sans font-medium flex justify-center items-center space-x-2 shadow-sm transition-colors">
+                <RefreshCw size={16} /> <span>Nouvelle session Focus</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
 };
+
 
 const defaultTimeline = [
   { id: 'fajr', time: 'Aube', slot: 'fajr', iconName: 'Sunrise', title: 'Fajr & Adhkar', desc: 'Prière à l\'heure et invocations du matin', completed: false, isSunnah: true },
