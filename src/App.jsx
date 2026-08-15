@@ -198,6 +198,42 @@ const ModuleParametres = ({ onClose, themePref, setThemePref }) => {
           </div>
         </div>
 
+        <div className="bg-white p-4 rounded-2xl border border-[#e8dfce] shadow-sm space-y-3">
+          <div className="flex items-center space-x-2 text-[#8c6b4a]">
+            <Bell size={18} />
+            <h3 className="font-sans font-bold uppercase tracking-wider text-xs">Rappels & Notifications</h3>
+          </div>
+          
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#fdfbf7] border border-[#e8dfce]">
+            <div>
+              <p className="text-sm font-sans font-medium text-[#3e2f24]">Rappels de prière & Bilan</p>
+              <p className="text-[10px] text-[#8c7b68]">Notification lors des moments clés si la prière n'est pas cochée</p>
+            </div>
+            <button 
+              onClick={async () => {
+                if (!notificationsEnabled) {
+                  if ("Notification" in window) {
+                    const perm = await Notification.requestPermission();
+                    if (perm === "granted") {
+                      setNotificationsEnabled(true);
+                      new Notification("Istiqamah", { body: "Les rappels de prière sont maintenant activés !" });
+                    } else {
+                      alert("Les notifications sont bloquées dans les paramètres de votre navigateur.");
+                    }
+                  } else {
+                    setNotificationsEnabled(true);
+                  }
+                } else {
+                  setNotificationsEnabled(false);
+                }
+              }}
+              className={`w-12 h-6 rounded-full transition-colors relative p-1 ${notificationsEnabled ? 'bg-[#5e8c61]' : 'bg-[#d4c8b8]'}`}
+            >
+              <div className={`w-4 h-4 rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+            </button>
+          </div>
+        </div>
+
         <div className="bg-white p-4 rounded-2xl border border-[#e8dfce] shadow-sm space-y-2">
            <div className="flex items-center space-x-2 mb-4 text-[#8c6b4a]">
             <Smartphone size={18} />
@@ -623,7 +659,18 @@ const ModuleIstiqamah = () => {
   const [newDesc, setNewDesc] = useState('');
 
   const toggleHabit = (id) => {
-    setTimeline(timeline.map(item => item.id === id ? { ...item, completed: !item.completed } : item));
+    setTimeline(timeline.map(item => {
+      if (item.id !== id) return item;
+      if (item.completed) return { ...item, completed: false, isQada: false };
+      return { ...item, completed: true, isQada: false };
+    }));
+  };
+
+  const markAsQada = (id) => {
+    setTimeline(timeline.map(item => {
+      if (item.id !== id) return item;
+      return { ...item, completed: true, isQada: true };
+    }));
   };
 
   const deleteCustomHabit = (id) => {
@@ -631,7 +678,7 @@ const ModuleIstiqamah = () => {
   };
 
   const resetTodayHabits = () => {
-    setTimeline(timeline.map(item => ({ ...item, completed: false })));
+    setTimeline(timeline.map(item => ({ ...item, completed: false, isQada: false })));
   };
 
   const handleAddCustomHabit = (e) => {
@@ -693,12 +740,12 @@ const ModuleIstiqamah = () => {
               <div key={item.id} className="relative flex items-start group">
                 <button 
                   onClick={() => toggleHabit(item.id)} 
-                  className={`relative z-10 w-10 h-10 rounded-full border-[3px] flex items-center justify-center transition-all duration-300 shadow-sm shrink-0 mt-2 ${item.completed ? 'bg-[#5e8c61] border-[#5e8c61] text-white' : 'bg-[#fdfbf7] border-[#8c6b4a] text-[#8c6b4a]'}`}
+                  className={`relative z-10 w-10 h-10 rounded-full border-[3px] flex items-center justify-center transition-all duration-300 shadow-sm shrink-0 mt-2 ${item.completed ? (item.isQada ? 'bg-[#b08d57] border-[#b08d57] text-white' : 'bg-[#5e8c61] border-[#5e8c61] text-white') : 'bg-[#fdfbf7] border-[#8c6b4a] text-[#8c6b4a]'}`}
                 >
                   {item.completed ? <Check size={18} strokeWidth={3} /> : <IconComp size={18} />}
                 </button>
                 
-                <div className={`ml-4 flex-1 bg-white p-4 rounded-2xl border transition-all duration-300 ${item.completed ? 'border-[#5e8c61] bg-[#f9fbf9]' : 'border-[#e8dfce]'}`}>
+                <div className={`ml-4 flex-1 bg-white p-4 rounded-2xl border transition-all duration-300 ${item.completed ? (item.isQada ? 'border-[#b08d57] bg-[#fcf8f2]' : 'border-[#5e8c61] bg-[#f9fbf9]') : 'border-[#e8dfce]'}`}>
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-sm text-[#3e2f24]">{item.title}</h3>
                     <div className="flex items-center space-x-1">
@@ -711,11 +758,27 @@ const ModuleIstiqamah = () => {
                     </div>
                   </div>
                   <p className="text-xs text-[#8c7b68] leading-snug">{item.desc}</p>
-                  {item.isSunnah && (
-                    <div className="mt-2 inline-flex items-center text-[9px] text-[#b08d57] font-sans font-bold uppercase">
-                      <Star size={10} className="mr-1" /> Sunnah
-                    </div>
-                  )}
+                  
+                  <div className="mt-2 flex items-center justify-between">
+                    {item.isSunnah ? (
+                      <div className="inline-flex items-center text-[9px] text-[#b08d57] font-sans font-bold uppercase">
+                        <Star size={10} className="mr-1" /> Sunnah
+                      </div>
+                    ) : <div />}
+
+                    {item.isQada ? (
+                      <span className="text-[9px] font-sans font-bold uppercase bg-[#f5f0e6] text-[#b08d57] border border-[#b08d57]/30 px-2 py-0.5 rounded-md flex items-center">
+                        <RefreshCcw size={10} className="mr-1" /> Rattrapée
+                      </span>
+                    ) : (!item.completed && (
+                      <button 
+                        onClick={() => markAsQada(item.id)} 
+                        className="text-[9px] font-sans font-bold text-[#8c6b4a] hover:bg-[#f5f0e6] border border-[#e8dfce] px-2 py-0.5 rounded-md transition-colors flex items-center"
+                      >
+                        <RefreshCcw size={10} className="mr-1" /> Rattraper
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             );
@@ -1315,59 +1378,6 @@ const ModuleAdhkar = () => {
   );
 };
 
-const ModuleQada = () => {
-  const [qada, setQada] = useLocalStorage('mindset_qada', {
-    fajr: 0,
-    dhuhr: 0,
-    asr: 0,
-    maghrib: 0,
-    isha: 0,
-    fasts: 0
-  });
-
-  const updateQada = (key, delta) => {
-    setQada(prev => ({ ...prev, [key]: Math.max(0, prev[key] + delta) }));
-  };
-
-  const prayers = [
-    { key: 'fajr', label: 'Fajr (2 Raka\'at)' },
-    { key: 'dhuhr', label: 'Dhuhr (4 Raka\'at)' },
-    { key: 'asr', label: 'Asr (4 Raka\'at)' },
-    { key: 'maghrib', label: 'Maghrib (3 Raka\'at)' },
-    { key: 'isha', label: 'Isha (4 Raka\'at)' },
-    { key: 'fasts', label: 'Jeûnes (Jours)' }
-  ];
-
-  return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7]">
-      <div className="p-4 border-b border-[#e8dfce] text-center shrink-0 bg-white">
-        <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-1">Qada</p>
-        <h1 className="text-xl font-bold text-[#3e2f24]">Suivi des Rattrapages</h1>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {prayers.map(p => (
-          <div key={p.key} className="bg-white p-4 rounded-2xl border border-[#e8dfce] flex items-center justify-between shadow-sm">
-            <div>
-              <h3 className="font-bold text-sm text-[#3e2f24]">{p.label}</h3>
-              <p className="text-[10px] text-[#8c7b68] font-sans uppercase">À rattraper</p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button onClick={() => updateQada(p.key, -1)} className="w-8 h-8 rounded-full bg-[#f5f0e6] text-[#8c7b68] flex items-center justify-center hover:bg-[#e8dfce]">
-                <Minus size={14} />
-              </button>
-              <span className="font-sans font-extrabold text-lg text-[#3e2f24] w-8 text-center">{qada[p.key]}</span>
-              <button onClick={() => updateQada(p.key, 1)} className="w-8 h-8 rounded-full bg-[#8c6b4a] text-white flex items-center justify-center hover:bg-[#7a5c3f]">
-                <Plus size={14} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const App = () => {
   const [activeTab, setActiveTab] = useState('ihsan');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -1397,7 +1407,7 @@ const App = () => {
         window.localStorage.setItem('mindset_muhasabah_ratings', JSON.stringify({ hilm: 0, rifq: 0, sidq: 0, tawadu: 0 }));
         window.localStorage.setItem('mindset_muhasabah_step', '"intro"');
         window.localStorage.setItem('mindset_sabr_step', '"intro"');
-        window.localStorage.setItem('mindset_timeline', JSON.stringify(tl.map(item => ({...item, completed: false}))));
+        window.localStorage.setItem('mindset_timeline', JSON.stringify(tl.map(item => ({...item, completed: false, isQada: false}))));
       } catch(e) { console.error(e); }
       window.localStorage.setItem('mindset_last_login', today);
       setAppKey(prev => prev + 1);
@@ -1427,8 +1437,7 @@ const App = () => {
     { id: 'ihsan', label: 'Équilibre', icon: LayoutDashboard },
     { id: 'muhasabah', label: 'Bilan', icon: Scale },
     { id: 'sabr', label: 'Résilience', icon: Compass },
-    { id: 'adhkar', label: 'Hisn al-Muslim', icon: Sparkles },
-    { id: 'qada', label: 'Qada', icon: CheckSquare }
+    { id: 'adhkar', label: 'Hisn al-Muslim', icon: Sparkles }
   ];
 
   const renderModule = () => {
@@ -1439,7 +1448,6 @@ const App = () => {
       case 'muhasabah': return <ModuleMuhasabah />;
       case 'sabr': return <ModuleSabr />;
       case 'adhkar': return <ModuleAdhkar />;
-      case 'qada': return <ModuleQada />;
       default: return <ModuleIhsan />;
     }
   };
