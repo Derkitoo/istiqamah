@@ -1320,70 +1320,70 @@ const ModuleIhsan = ({ onOpenSettings }) => {
 const sabahAdhkar = [
   { 
     id: 'kursi', 
-    title: 'Ayat al-Kursi', 
-    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ...', 
-    phonetic: 'Allahu la ilaha illa Huwa, al-Hayyul-Qayyum, la ta\'khuduhu sinatun wa la nawm, lahu ma fis-samawati wa ma fil-ard...',
-    translation: 'Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même... (Coran 2:255)', 
+    title: 'Ayat al-Kursi (Verset du Trône)', 
+    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ', 
+    phonetic: 'Allahu la ilaha illa Huwa, al-Hayyul-Qayyum, la ta\'khuduhu sinatun wa la nawm, lahu ma fis-samawati wa ma fil-ard, man dhal-ladhi yashfa\'u \'indahu illa bi-idhnih, ya\'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi-shay\'im-min \'ilmihi illa bima sha\'a, wasi\'a kursiyyuhus-samawati wal-ard, wa la ya\'uduhu hifzhuhuma, wa Huwal-\'Aliyyul-\'Azim.',
+    translation: 'Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne L\'atteignent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Qui peut intercéder auprès de Lui sans Sa permission ? Il sait leur passé et leur avenir. Et, de Sa science, ils n\'embrassent que ce qu\'Il veut. Son Trône déborde les cieux et la terre, dont la garde ne Lui coûte aucune peine. Et Il est le Très Haut, le Très Grand.', 
     target: 1, 
     source: 'Coran (2:255) / Al-Nasa\'i' 
   },
   { 
     id: 'ikhlas_falak_nas', 
     title: 'Les 3 Sourates Protectrices (Ikhlas, Falaq, Nas)', 
-    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ', 
-    phonetic: 'Qul Huwa Allahu Ahad... / Qul a\'udhu bi Rabbil-falaq... / Qul a\'udhu bi Rabbin-nas...',
-    translation: 'Réciter 3 fois chaque sourate (Al-Ikhlas, Al-Falaq, An-Nas) matin et soir.', 
+    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾\n\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾\n\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾', 
+    phonetic: 'Qul Huwa Allahu Ahad (1) Allahus-Samad (2) Lam yalid wa lam yulad (3) Wa lam yakul-lahu kufuwan ahad (4)\n\nQul a\'udhu bi Rabbil-falaq (1) Min sharri ma khalaq (2) Wa min sharri ghasiqin idha waqab (3) Wa min sharrin-naffathati fil-\'uqad (4) Wa min sharri hasidin idha hasad (5)\n\nQul a\'udhu bi Rabbin-nas (1) Malikin-nas (2) Ilahin-nas (3) Min sharril-waswasil-khannas (4) Alladhi yuwaswisu fi sudurin-nas (5) Minal-jinnati wan-nas (6)',
+    translation: 'Réciter en entier les 3 sourates Al-Ikhlas (Le Monothéisme Pur), Al-Falaq (L\'Aube Naissante) et An-Nas (Les Hommes) 3 fois le matin et 3 fois le soir.', 
     target: 3, 
     source: 'At-Tirmidhi & Abou Dawoud' 
   },
   { 
     id: 'sayyid_stighfar', 
-    title: 'Sayyid al-Istighfar (Maître de l\'Improvisation)', 
-    arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ...', 
-    phonetic: 'Allahumma Anta Rabbi, la ilaha illa Anta, khalaqtani wa ana \'abduka, wa ana \'ala \'ahdika wa wa\'dika mastata\'t...',
-    translation: 'Ô Allah, Tu es mon Seigneur, nul ne mérite d\'être adoré si ce n\'est Toi, Tu m\'as créé et je suis Ton serviteur...', 
+    title: 'Sayyid al-Istighfar (Le Maître de la Demande de Pardon)', 
+    arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', 
+    phonetic: 'Allahumma Anta Rabbi, la ilaha illa Anta, khalaqtani wa ana \'abduka, wa ana \'ala \'ahdika wa wa\'dika mastata\'t, a\'udhu bika min sharri ma sana\'t, abu\'u laka bi-ni\'matika \'alayya, wa abu\'u bi-dhanbi faghfir li, fa-innahu la yaghfirudh-dhunuba illa Anta.',
+    translation: 'Ô Allah, Tu es mon Seigneur, il n\'y a de divinité que Toi. Tu m\'as créé et je suis Ton serviteur, et je me tiens à Ton engagement et à Ta promesse autant que je le puis. Je cherche protection auprès de Toi contre le mal de ce que j\'ai fait. Je reconnais devant Toi Tes bienfaits sur moi, et je reconnais mon péché. Pardonne-moi donc, car nul autre que Toi ne pardonne les péchés.', 
     target: 1, 
     source: 'Al-Boukhari' 
   },
   { 
     id: 'sabah_mulk', 
     title: 'Invocation du Matin (La Royauté)', 
-    arabic: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ...', 
-    phonetic: 'Asbahna wa asbahal-mulku lillah, wal-hamdu lillah, la ilaha illa Allah wahdahu la sharika lah, lahul-mulku wa lahul-hamd...',
-    translation: 'Nous voilà au matin et la royauté appartient à Allah. Louange à Allah, point de divinité à part Allah Unique sans associé.', 
+    arabic: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ. رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ', 
+    phonetic: 'Asbahna wa asbahal-mulku lillah, wal-hamdu lillah, la ilaha illa Allahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa \'ala kulli shay\'in Qadir. Rabbi as\'aluka khayra ma fi hadhal-yawmi wa khayra ma ba\'dah, wa a\'udhu bika min sharri ma fi hadhal-yawmi wa sharri ma ba\'dah. Rabbi a\'udhu bika minal-kasali wa su\'il-kibar, Rabbi a\'udhu bika min \'adhabin fin-nari wa \'adhabin fil-qabr.',
+    translation: 'Nous sommes au matin et la royauté appartient à Allah, louange à Allah. Il n\'y a de divinité qu\'Allah, Unique sans associé. À Lui la royauté et la louange, et Il est Omnipotent. Seigneur, je Te demande le bien de ce jour et le bien qui vient après, et je me réfugie auprès de Toi contre le mal de ce jour et le mal qui vient après. Seigneur, je me réfugie auprès de Toi contre la paresse et la mauvaise vieillesse. Seigneur, je me réfugie auprès de Toi contre le châtiment du Feu et le châtiment de la tombe.', 
     target: 1, 
     source: 'Mouslim' 
   },
   { 
     id: 'radhitu', 
-    title: 'Agrément d\'Allah et de l\'Islam', 
-    arabic: 'رَضِيتُ بِاللَّهِ رَبّاً، وَبِالْإِسْلَامِ دِيناً، وَبِمُحَمَّدٍ نَبِيّاً', 
-    phonetic: 'Radhitu billahi Rabban, wa bil-Islami dinan, wa bi-Muhammadin nabiyya.',
-    translation: 'J\'agrée Allah comme Seigneur, l\'Islam comme religion et Muhammad comme prophète.', 
+    title: 'Agrément d\'Allah, de l\'Islam et du Prophète', 
+    arabic: 'رَضِيتُ بِاللَّهِ رَبّاً، وَبِالْإِسْلَامِ دِيناً، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيّاً', 
+    phonetic: 'Radhitu billahi Rabban, wa bil-Islami dinan, wa bi-Muhammadin sallallahu \'alayhi wa sallama nabiyya.',
+    translation: 'J\'agrée Allah comme Seigneur, l\'Islam comme religion et Muhammad (que la paix et les bénédictions d\'Allah soient sur lui) comme Prophète.', 
     target: 3, 
     source: 'At-Tirmidhi & An-Nasa\'i' 
   },
   { 
     id: 'bismillah', 
-    title: 'Protection contre tout mal terrestre et céleste', 
+    title: 'Protection universelle contre tout mal', 
     arabic: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', 
-    phonetic: 'Bismillahi alladhi la yadurru ma\'asmihi shay\'un fil-ardi wa la fis-sama\' wa Huwa As-Sami\'ul-\'Alim.',
-    translation: 'Au nom d\'Allah, avec Dont le Nom rien ne peut nuire sur terre ni au ciel, et Il est L\'Audient, L\'Omniscient.', 
+    phonetic: 'Bismillahi alladhi la yadurru ma\'asmihi shay\'un fil-ardi wa la fis-sama\'i wa Huwas-Sami\'ul-\'Alim.',
+    translation: 'Au nom d\'Allah, avec le Nom duquel rien ne peut nuire sur terre ni dans le ciel, et Il est l\'Audient, l\'Omniscient.', 
     target: 3, 
     source: 'Abou Dawoud & At-Tirmidhi' 
   },
   { 
     id: 'hasbi_allah', 
-    title: 'Suffisance d\'Allah', 
+    title: 'La suffisance et la confiance en Allah', 
     arabic: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', 
     phonetic: 'HasbiyAllahu la ilaha illa Huwa, \'alayhi tawakkaltu wa Huwa Rabbul-\'arshil-\'azim.',
-    translation: 'Allah me suffit. Point de divinité à part Lui. Je place ma confiance en Lui et Il est le Seigneur du Trône Immense.', 
+    translation: 'Allah me suffit. Il n\'y a de divinité que Lui. En Lui je place ma confiance, et Il est le Seigneur du Trône Immense.', 
     target: 7, 
     source: 'Abou Dawoud' 
   },
   { 
     id: 'tasbih_sabah', 
-    title: 'Louange et Gloire d\'Allah', 
+    title: 'Glorification & Louange d\'Allah', 
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', 
     phonetic: 'Subhanallahi wa bihamdihi.',
     translation: 'Gloire et louange à Allah.', 
@@ -1395,66 +1395,75 @@ const sabahAdhkar = [
 const masaAdhkar = [
   { 
     id: 'kursi_m', 
-    title: 'Ayat al-Kursi', 
-    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ...', 
-    phonetic: 'Allahu la ilaha illa Huwa, al-Hayyul-Qayyum, la ta\'khuduhu sinatun wa la nawm...',
-    translation: 'Allah ! Point de divinité à part Lui, le Vivant... (Coran 2:255)', 
+    title: 'Ayat al-Kursi (Verset du Trône)', 
+    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ', 
+    phonetic: 'Allahu la ilaha illa Huwa, al-Hayyul-Qayyum, la ta\'khuduhu sinatun wa la nawm, lahu ma fis-samawati wa ma fil-ard, man dhal-ladhi yashfa\'u \'indahu illa bi-idhnih, ya\'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi-shay\'im-min \'ilmihi illa bima sha\'a, wasi\'a kursiyyuhus-samawati wal-ard, wa la ya\'uduhu hifzhuhuma, wa Huwal-\'Aliyyul-\'Azim.',
+    translation: 'Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne L\'atteignent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Qui peut intercéder auprès de Lui sans Sa permission ? Il sait leur passé et leur avenir. Et, de Sa science, ils n\'embrassent que ce qu\'Il veut. Son Trône déborde les cieux et la terre, dont la garde ne Lui coûte aucune peine. Et Il est le Très Haut, le Très Grand.', 
     target: 1, 
-    source: 'Coran (2:255)' 
+    source: 'Coran (2:255) / Al-Nasa\'i' 
   },
   { 
     id: 'ikhlas_m', 
     title: 'Les 3 Sourates Protectrices (Ikhlas, Falaq, Nas)', 
-    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ... قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ... قُلْ أَعُوذُ بِرَبِّ النَّاسِ', 
-    phonetic: 'Qul Huwa Allahu Ahad... / Qul a\'udhu bi Rabbil-falaq... / Qul a\'udhu bi Rabbin-nas...',
-    translation: 'Réciter 3 fois chaque sourate le soir.', 
+    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾\n\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾\n\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾', 
+    phonetic: 'Qul Huwa Allahu Ahad (1) Allahus-Samad (2) Lam yalid wa lam yulad (3) Wa lam yakul-lahu kufuwan ahad (4)\n\nQul a\'udhu bi Rabbil-falaq (1) Min sharri ma khalaq (2) Wa min sharri ghasiqin idha waqab (3) Wa min sharrin-naffathati fil-\'uqad (4) Wa min sharri hasidin idha hasad (5)\n\nQul a\'udhu bi Rabbin-nas (1) Malikin-nas (2) Ilahin-nas (3) Min sharril-waswasil-khannas (4) Alladhi yuwaswisu fi sudurin-nas (5) Minal-jinnati wan-nas (6)',
+    translation: 'Réciter en entier les 3 sourates Al-Ikhlas (Le Monothéisme Pur), Al-Falaq (L\'Aube Naissante) et An-Nas (Les Hommes) 3 fois le soir.', 
     target: 3, 
     source: 'At-Tirmidhi & Abou Dawoud' 
   },
   { 
     id: 'sayyid_m', 
-    title: 'Sayyid al-Istighfar', 
-    arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ...', 
-    phonetic: 'Allahumma Anta Rabbi, la ilaha illa Anta, khalaqtani wa ana \'abduka...',
-    translation: 'Ô Allah, Tu es mon Seigneur, nul ne mérite d\'être adoré si ce n\'est Toi...', 
+    title: 'Sayyid al-Istighfar (Le Maître de la Demande de Pardon)', 
+    arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', 
+    phonetic: 'Allahumma Anta Rabbi, la ilaha illa Anta, khalaqtani wa ana \'abduka, wa ana \'ala \'ahdika wa wa\'dika mastata\'t, a\'udhu bika min sharri ma sana\'t, abu\'u laka bi-ni\'matika \'alayya, wa abu\'u bi-dhanbi faghfir li, fa-innahu la yaghfirudh-dhunuba illa Anta.',
+    translation: 'Ô Allah, Tu es mon Seigneur, il n\'y a de divinité que Toi. Tu m\'as créé et je suis Ton serviteur, et je me tiens à Ton engagement et à Ta promesse autant que je le puis. Je cherche protection auprès de Toi contre le mal de ce que j\'ai fait. Je reconnais devant Toi Tes bienfaits sur moi, et je reconnais mon péché. Pardonne-moi donc, car nul autre que Toi ne pardonne les péchés.', 
     target: 1, 
     source: 'Al-Boukhari' 
   },
   { 
     id: 'masa_mulk', 
     title: 'Invocation du Soir (La Royauté)', 
-    arabic: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ...', 
-    phonetic: 'Amsayna wa amsayal-mulku lillah, wal-hamdu lillah, la ilaha illa Allah wahdahu la sharika lah...',
-    translation: 'Nous voilà au soir et la royauté appartient à Allah. Louange à Allah...', 
+    arabic: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا. رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ', 
+    phonetic: 'Amsayna wa amsayal-mulku lillah, wal-hamdu lillah, la ilaha illa Allahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa Huwa \'ala kulli shay\'in Qadir. Rabbi as\'aluka khayra ma fi hadhihil-laylati wa khayra ma ba\'daha, wa a\'udhu bika min sharri ma fi hadhihil-laylati wa sharri ma ba\'daha. Rabbi a\'udhu bika minal-kasali wa su\'il-kibar, Rabbi a\'udhu bika min \'adhabin fin-nari wa \'adhabin fil-qabr.',
+    translation: 'Nous sommes au soir et la royauté appartient à Allah, louange à Allah. Il n\'y a de divinité qu\'Allah, Unique sans associé. À Lui la royauté et la louange, et Il est Omnipotent. Seigneur, je Te demande le bien de cette nuit et le bien qui vient après, et je me réfugie auprès de Toi contre le mal de cette nuit et le mal qui vient après. Seigneur, je me réfugie auprès de Toi contre la paresse et la mauvaise vieillesse. Seigneur, je me réfugie auprès de Toi contre le châtiment du Feu et le châtiment de la tombe.', 
     target: 1, 
     source: 'Mouslim' 
   },
   { 
     id: 'radhitu_m', 
-    title: 'Agrément d\'Allah et de l\'Islam', 
-    arabic: 'رَضِيتُ بِاللَّهِ رَبّاً، وَبِالْإِسْلَامِ دِيناً، وَبِمُحَمَّدٍ نَبِيّاً', 
-    phonetic: 'Radhitu billahi Rabban, wa bil-Islami dinan, wa bi-Muhammadin nabiyya.',
-    translation: 'J\'agrée Allah comme Seigneur, l\'Islam comme religion et Muhammad comme prophète.', 
+    title: 'Agrément d\'Allah, de l\'Islam et du Prophète', 
+    arabic: 'رَضِيتُ بِاللَّهِ رَبّاً، وَبِالْإِسْلَامِ دِيناً، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيّاً', 
+    phonetic: 'Radhitu billahi Rabban, wa bil-Islami dinan, wa bi-Muhammadin sallallahu \'alayhi wa sallama nabiyya.',
+    translation: 'J\'agrée Allah comme Seigneur, l\'Islam comme religion et Muhammad (que la paix et les bénédictions d\'Allah soient sur lui) comme Prophète.', 
     target: 3, 
     source: 'At-Tirmidhi & An-Nasa\'i' 
   },
   { 
     id: 'bismillah_m', 
-    title: 'Protection contre tout mal terrestre et céleste', 
+    title: 'Protection universelle contre tout mal', 
     arabic: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', 
-    phonetic: 'Bismillahi alladhi la yadurru ma\'asmihi shay\'un fil-ardi wa la fis-sama\' wa Huwa As-Sami\'ul-\'Alim.',
-    translation: 'Au nom d\'Allah, avec Dont le Nom rien ne peut nuire sur terre ni au ciel...', 
+    phonetic: 'Bismillahi alladhi la yadurru ma\'asmihi shay\'un fil-ardi wa la fis-sama\'i wa Huwas-Sami\'ul-\'Alim.',
+    translation: 'Au nom d\'Allah, avec le Nom duquel rien ne peut nuire sur terre ni dans le ciel, et Il est l\'Audient, l\'Omniscient.', 
     target: 3, 
     source: 'Abou Dawoud & At-Tirmidhi' 
   },
   { 
     id: 'hasbi_allah_m', 
-    title: 'Suffisance d\'Allah', 
+    title: 'La suffisance et la confiance en Allah', 
     arabic: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', 
     phonetic: 'HasbiyAllahu la ilaha illa Huwa, \'alayhi tawakkaltu wa Huwa Rabbul-\'arshil-\'azim.',
-    translation: 'Allah me suffit. Point de divinité à part Lui...', 
+    translation: 'Allah me suffit. Il n\'y a de divinité que Lui. En Lui je place ma confiance, et Il est le Seigneur du Trône Immense.', 
     target: 7, 
     source: 'Abou Dawoud' 
+  },
+  { 
+    id: 'audhu_kalimat', 
+    title: 'Protection par les Paroles Parfaites d\'Allah', 
+    arabic: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', 
+    phonetic: 'A\'udhu bi-kalimatillahit-tammati min sharri ma khalaq.',
+    translation: 'Je cherche protection auprès des paroles parfaites d\'Allah contre le mal de ce qu\'Il a créé.', 
+    target: 3, 
+    source: 'Mouslim' 
   }
 ];
 
@@ -1545,17 +1554,17 @@ const ModuleAdhkar = ({ onOpenSettings }) => {
 
             <div className="flex-1 overflow-y-auto py-4 space-y-4 font-serif">
               <div className="bg-white p-4 rounded-2xl border border-[#e8dfce]">
-                <p className="text-right font-serif text-xl leading-loose text-[#8c6b4a] dir-rtl">{selectedDua.arabic}</p>
+                <p className="text-right font-serif text-xl leading-loose text-[#8c6b4a] dir-rtl whitespace-pre-line">{selectedDua.arabic}</p>
               </div>
 
               <div className="bg-[#f5f0e6] p-4 rounded-2xl border border-[#e8dfce]">
                 <p className="text-xs font-sans font-bold text-[#8c6b4a] uppercase mb-1">Prononciation Phonétique :</p>
-                <p className="text-xs font-sans text-[#4a3f35] italic leading-relaxed">{selectedDua.phonetic}</p>
+                <p className="text-xs font-sans text-[#4a3f35] italic leading-relaxed whitespace-pre-line">{selectedDua.phonetic}</p>
               </div>
 
               <div className="bg-white p-4 rounded-2xl border border-[#e8dfce]">
                 <p className="text-xs font-sans font-bold text-[#3e2f24] uppercase mb-1">Traduction & Sens :</p>
-                <p className="text-xs text-[#6b5a48] leading-relaxed">« {selectedDua.translation} »</p>
+                <p className="text-xs text-[#6b5a48] leading-relaxed whitespace-pre-line">« {selectedDua.translation} »</p>
               </div>
             </div>
 
