@@ -939,7 +939,9 @@ const ModuleSabr = () => {
   const [step, setStep] = useLocalStorage('mindset_sabr_step', 'intro');
   const [obstacle, setObstacle] = useLocalStorage('mindset_sabr_obstacle', '');
   const [lesson, setLesson] = useLocalStorage('mindset_sabr_lesson', '');
+  const [sabrHistory, setSabrHistory] = useLocalStorage('mindset_sabr_history', []);
   const [isEditingObstacle, setIsEditingObstacle] = useState(false);
+  const [viewHistory, setViewHistory] = useState(false);
 
   const generateLocalLesson = () => {
     const randomIndex = Math.floor(Math.random() * islamicWisdoms.length);
@@ -947,88 +949,140 @@ const ModuleSabr = () => {
     setLesson(`« ${selected.text} »\n\n${selected.source}`);
   };
 
+  const handleAncreLesson = () => {
+    if (!obstacle.trim() || !lesson.trim()) return;
+    const newEntry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString('fr-FR'),
+      obstacle: obstacle.trim(),
+      lesson: lesson.trim()
+    };
+    setSabrHistory([newEntry, ...sabrHistory]);
+    setStep('success');
+  };
+
+  const deleteJournalEntry = (id) => {
+    setSabrHistory(sabrHistory.filter(entry => entry.id !== id));
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7]">
-      <div className="p-4 border-b border-[#e8dfce] text-center shrink-0 bg-white">
-        <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-1">As-Sabr</p>
-        <h1 className="text-xl font-bold text-[#3e2f24]">Plan vs Réalité</h1>
+      <div className="p-4 border-b border-[#e8dfce] flex justify-between items-center shrink-0 bg-white">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-0.5">As-Sabr</p>
+          <h1 className="text-xl font-bold text-[#3e2f24]">Plan vs Réalité</h1>
+        </div>
+        <button onClick={() => setViewHistory(!viewHistory)} className={`p-2 rounded-xl border text-xs font-sans font-bold flex items-center space-x-1 transition-all ${viewHistory ? 'bg-[#8c6b4a] text-white border-[#8c6b4a]' : 'bg-[#f5f0e6] text-[#8c6b4a] border-[#e8dfce]'}`}>
+          <BookOpen size={14} />
+          <span>{viewHistory ? 'Formulaire' : 'Journal'} ({sabrHistory.length})</span>
+        </button>
       </div>
 
-      <div className="flex-1 flex flex-col p-5 h-full">
-        {step === 'intro' && (
-          <div className="flex-1 flex flex-col justify-between items-center text-center animate-fade-in py-4">
-            <Mountain size={40} className="text-[#b08d57] mb-4 shrink-0" strokeWidth={1.5} />
-            <div className="w-full space-y-6 shrink-0 my-auto">
-              <div>
-                <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase text-left pl-1 mb-1">Ton Plan</p>
-                <svg viewBox="0 -10 120 40" className="w-full h-auto stroke-[#8c6b4a] fill-none">
-                  <line x1="10" y1="20" x2="110" y2="20" strokeWidth="1.5" strokeLinecap="round" />
-                  <circle cx="20" cy="18" r="2.5" fill="#8c6b4a" stroke="none" />
-                  <line x1="110" y1="20" x2="110" y2="-5" strokeWidth="1.5" />
-                  <rect x="100" y="-5" width="10" height="8" fill="#8c6b4a" stroke="none" />
-                </svg>
+      <div className="flex-1 flex flex-col p-5 h-full overflow-hidden">
+        {viewHistory ? (
+          <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in">
+            <h3 className="font-sans font-bold text-xs uppercase tracking-wider text-[#8c6b4a] mb-3 shrink-0">Mon Journal de Résilience</h3>
+            {sabrHistory.length === 0 ? (
+              <p className="text-xs text-[#8c7b68] italic text-center py-8">Aucun obstacle recadré enregistré pour le moment.</p>
+            ) : (
+              <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                {sabrHistory.map(entry => (
+                  <div key={entry.id} className="bg-white p-4 rounded-2xl border border-[#e8dfce] shadow-sm relative space-y-2">
+                    <div className="flex justify-between items-center text-[10px] text-[#a99c8f] font-sans font-bold">
+                      <span>{entry.date}</span>
+                      <button onClick={() => deleteJournalEntry(entry.id)} className="text-[#c25e5e] hover:opacity-80"><Trash2 size={12} /></button>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-sans font-bold text-[#8c7b68]">Poids / Obstacle :</p>
+                      <p className="text-xs text-[#3e2f24] italic">"{entry.obstacle}"</p>
+                    </div>
+                    <div className="pt-2 border-t border-[#f2efe9]">
+                      <p className="text-[10px] uppercase font-sans font-bold text-[#8c6b4a]">Lumière / Leçon :</p>
+                      <p className="text-xs text-[#4a3f35] whitespace-pre-line">« {entry.lesson} »</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase text-left pl-1 mb-1">La Réalité</p>
-                <svg viewBox="0 -10 120 60" className="w-full h-auto stroke-[#8c6b4a] fill-none">
-                  <path d="M 10 20 L 20 20 C 25 35, 30 35, 35 20 C 40 0, 45 0, 50 20 L 55 20 C 60 55, 75 55, 80 20 L 86 0 L 92 25 L 100 -10 L 110 -10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <circle cx="16" cy="18" r="2.5" fill="#8c6b4a" stroke="none" />
-                  <line x1="110" y1="-10" x2="110" y2="-40" strokeWidth="1.5" />
-                  <rect x="100" y="-40" width="10" height="8" fill="#8c6b4a" stroke="none" />
-                </svg>
+            )}
+          </div>
+        ) : (
+          <>
+            {step === 'intro' && (
+              <div className="flex-1 flex flex-col justify-between items-center text-center animate-fade-in py-4">
+                <Mountain size={40} className="text-[#b08d57] mb-4 shrink-0" strokeWidth={1.5} />
+                <div className="w-full space-y-6 shrink-0 my-auto">
+                  <div>
+                    <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase text-left pl-1 mb-1">Ton Plan</p>
+                    <svg viewBox="0 -10 120 40" className="w-full h-auto stroke-[#8c6b4a] fill-none">
+                      <line x1="10" y1="20" x2="110" y2="20" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="20" cy="18" r="2.5" fill="#8c6b4a" stroke="none" />
+                      <line x1="110" y1="20" x2="110" y2="-5" strokeWidth="1.5" />
+                      <rect x="100" y="-5" width="10" height="8" fill="#8c6b4a" stroke="none" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-sans font-bold text-[#8c7b68] uppercase text-left pl-1 mb-1">La Réalité</p>
+                    <svg viewBox="0 -10 120 60" className="w-full h-auto stroke-[#8c6b4a] fill-none">
+                      <path d="M 10 20 L 20 20 C 25 35, 30 35, 35 20 C 40 0, 45 0, 50 20 L 55 20 C 60 55, 75 55, 80 20 L 86 0 L 92 25 L 100 -10 L 110 -10" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="16" cy="18" r="2.5" fill="#8c6b4a" stroke="none" />
+                      <line x1="110" y1="-10" x2="110" y2="-40" strokeWidth="1.5" />
+                      <rect x="100" y="-40" width="10" height="8" fill="#8c6b4a" stroke="none" />
+                    </svg>
+                  </div>
+                </div>
+                <button onClick={() => setStep('obstacle')} className="w-full shrink-0 bg-[#8c6b4a] text-white py-3.5 rounded-xl font-sans font-medium mt-4">Identifier un obstacle</button>
               </div>
-            </div>
-            <button onClick={() => setStep('obstacle')} className="w-full shrink-0 bg-[#8c6b4a] text-white py-3.5 rounded-xl font-sans font-medium mt-4">Identifier un obstacle</button>
-          </div>
-        )}
+            )}
 
-        {step === 'obstacle' && (
-          <div className="flex-1 flex flex-col animate-fade-in text-center h-full">
-            <Anchor size={32} className="mx-auto text-[#8c7b68] mb-2 shrink-0" strokeWidth={1.5} />
-            <h2 className="text-xl font-bold text-[#3e2f24] mb-1 shrink-0">Le Poids</h2>
-            <p className="text-xs text-[#6b5a48] mb-4 shrink-0">Qu'est-ce qui t'a ralenti ou frustré aujourd'hui ?</p>
-            <textarea value={obstacle} onChange={(e) => setObstacle(e.target.value)} placeholder="Ex: J'avais prévu d'avancer, mais..." className="flex-1 w-full bg-[#fdfbf7] border-2 border-[#e8dfce] rounded-xl p-4 font-sans text-sm outline-none resize-none shadow-inner focus:border-[#b08d57] mb-4" />
-            <button onClick={() => setStep('reframe')} disabled={!obstacle.trim()} className="w-full shrink-0 bg-[#8c6b4a] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl font-sans font-medium">Continuer</button>
-          </div>
-        )}
-
-        {step === 'reframe' && (
-          <div className="flex-1 flex flex-col animate-fade-in text-center h-full">
-            <Sun size={32} className="mx-auto text-[#b08d57] mb-2 shrink-0" strokeWidth={1.5} />
-            <h2 className="text-xl font-bold text-[#3e2f24] mb-1 shrink-0">La Lumière</h2>
-            
-            <div className="bg-[#fdfbf7] border border-[#e8dfce] p-3 rounded-xl mb-3 text-left relative shrink-0">
-              <div className="flex justify-between items-center mb-1">
-                 <p className="text-[10px] font-sans uppercase font-bold text-[#8c7b68]">L'Obstacle :</p>
-                 <button onClick={() => setIsEditingObstacle(!isEditingObstacle)} className="text-[#a99c8f]"><Edit3 size={12} /></button>
+            {step === 'obstacle' && (
+              <div className="flex-1 flex flex-col animate-fade-in text-center h-full">
+                <Anchor size={32} className="mx-auto text-[#8c7b68] mb-2 shrink-0" strokeWidth={1.5} />
+                <h2 className="text-xl font-bold text-[#3e2f24] mb-1 shrink-0">Le Poids</h2>
+                <p className="text-xs text-[#6b5a48] mb-4 shrink-0">Qu'est-ce qui t'a ralenti ou frustré aujourd'hui ?</p>
+                <textarea value={obstacle} onChange={(e) => setObstacle(e.target.value)} placeholder="Ex: J'avais prévu d'avancer, mais..." className="flex-1 w-full bg-[#fdfbf7] border-2 border-[#e8dfce] rounded-xl p-4 font-sans text-sm outline-none resize-none shadow-inner focus:border-[#b08d57] mb-4" />
+                <button onClick={() => setStep('reframe')} disabled={!obstacle.trim()} className="w-full shrink-0 bg-[#8c6b4a] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl font-sans font-medium">Continuer</button>
               </div>
-              {isEditingObstacle ? (
-                 <textarea value={obstacle} onChange={(e) => setObstacle(e.target.value)} onBlur={() => setIsEditingObstacle(false)} autoFocus className="w-full bg-white border border-[#b08d57] rounded p-2 text-xs italic font-sans outline-none resize-none h-16" />
-              ) : (
-                 <p className="text-xs italic text-[#4a3f35] line-clamp-2">"{obstacle}"</p>
-              )}
-            </div>
+            )}
 
-            <textarea value={lesson} onChange={(e) => setLesson(e.target.value)} placeholder="Écris ta propre leçon, ou demande à piocher une sagesse ci-dessous..." className="flex-1 w-full bg-white border-2 border-[#b08d57] rounded-xl p-4 font-sans text-sm outline-none resize-none shadow-sm mb-3" />
-            
-            <button onClick={generateLocalLesson} disabled={!obstacle.trim()} className="w-full shrink-0 bg-[#f5f0e6] text-[#8c6b4a] border border-[#e8dfce] py-3 rounded-xl font-sans font-medium mb-3 flex justify-center items-center space-x-2 hover:bg-[#e8dfce] transition-colors">
-              <Feather size={16} />
-              <span className="text-sm">Trouver l'inspiration (Sagesse)</span>
-            </button>
+            {step === 'reframe' && (
+              <div className="flex-1 flex flex-col animate-fade-in text-center h-full">
+                <Sun size={32} className="mx-auto text-[#b08d57] mb-2 shrink-0" strokeWidth={1.5} />
+                <h2 className="text-xl font-bold text-[#3e2f24] mb-1 shrink-0">La Lumière</h2>
+                
+                <div className="bg-[#fdfbf7] border border-[#e8dfce] p-3 rounded-xl mb-3 text-left relative shrink-0">
+                  <div className="flex justify-between items-center mb-1">
+                     <p className="text-[10px] font-sans uppercase font-bold text-[#8c7b68]">L'Obstacle :</p>
+                     <button onClick={() => setIsEditingObstacle(!isEditingObstacle)} className="text-[#a99c8f]"><Edit3 size={12} /></button>
+                  </div>
+                  {isEditingObstacle ? (
+                     <textarea value={obstacle} onChange={(e) => setObstacle(e.target.value)} onBlur={() => setIsEditingObstacle(false)} autoFocus className="w-full bg-white border border-[#b08d57] rounded p-2 text-xs italic font-sans outline-none resize-none h-16" />
+                  ) : (
+                     <p className="text-xs italic text-[#4a3f35] line-clamp-2">"{obstacle}"</p>
+                  )}
+                </div>
 
-            <button onClick={() => setStep('success')} disabled={!lesson.trim() || !obstacle.trim()} className="w-full shrink-0 bg-[#8c6b4a] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl font-sans font-medium">Ancrer la leçon</button>
-          </div>
-        )}
+                <textarea value={lesson} onChange={(e) => setLesson(e.target.value)} placeholder="Écris ta propre leçon, ou demande à piocher une sagesse ci-dessous..." className="flex-1 w-full bg-white border-2 border-[#b08d57] rounded-xl p-4 font-sans text-sm outline-none resize-none shadow-sm mb-3" />
+                
+                <button onClick={generateLocalLesson} disabled={!obstacle.trim()} className="w-full shrink-0 bg-[#f5f0e6] text-[#8c6b4a] border border-[#e8dfce] py-3 rounded-xl font-sans font-medium mb-3 flex justify-center items-center space-x-2 hover:bg-[#e8dfce] transition-colors">
+                  <Feather size={16} />
+                  <span className="text-sm">Trouver l'inspiration (Sagesse)</span>
+                </button>
 
-        {step === 'success' && (
-          <div className="flex-1 flex flex-col justify-center items-center text-center animate-fade-in">
-             <div className="bg-[#5e8c61] text-white p-5 rounded-full shadow-lg mb-4"><Feather size={32} /></div>
-             <h2 className="text-xl font-bold text-[#3e2f24] mb-2">Obstacle Recadré</h2>
-             <p className="text-xs text-[#6b5a48] mb-8">Ton effort a été sauvegardé. La résilience est un travail interne.</p>
-            <button onClick={() => {setObstacle(''); setLesson(''); setStep('intro');}} className="w-full border-2 border-[#8c6b4a] text-[#8c6b4a] py-3.5 rounded-xl font-sans font-medium flex justify-center items-center space-x-2">
-              <RefreshCcw size={16} /> <span>Nouveau recadrage</span>
-            </button>
-          </div>
+                <button onClick={handleAncreLesson} disabled={!lesson.trim() || !obstacle.trim()} className="w-full shrink-0 bg-[#8c6b4a] disabled:bg-[#d4c8b8] text-white py-3.5 rounded-xl font-sans font-medium">Ancrer la leçon</button>
+              </div>
+            )}
+
+            {step === 'success' && (
+              <div className="flex-1 flex flex-col justify-center items-center text-center animate-fade-in">
+                 <div className="bg-[#5e8c61] text-white p-5 rounded-full shadow-lg mb-4"><Feather size={32} /></div>
+                 <h2 className="text-xl font-bold text-[#3e2f24] mb-2">Obstacle Recadré & Enregistré</h2>
+                 <p className="text-xs text-[#6b5a48] mb-8">Ton effort a été sauvegardé dans ton journal de résilience.</p>
+                <button onClick={() => {setObstacle(''); setLesson(''); setStep('intro');}} className="w-full border-2 border-[#8c6b4a] text-[#8c6b4a] py-3.5 rounded-xl font-sans font-medium flex justify-center items-center space-x-2">
+                  <RefreshCcw size={16} /> <span>Nouveau recadrage</span>
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -1049,10 +1103,10 @@ const ModuleIhsan = () => {
   };
 
   const data = {
-    savoir: { id: 'savoir', name: 'Savoir-Faire', arabic: '‘Ilm', icon: BookOpen, bg: "bg-[#f5f0e6]", color: "text-[#8c6b4a]" },
-    solidite: { id: 'solidite', name: 'Solidité', arabic: 'Quwwah', icon: Dumbbell, bg: "bg-[#f0f5f1]", color: "text-[#5e8c61]" },
-    serenite: { id: 'serenite', name: 'Sérénité', arabic: 'Sakinah', icon: Shield, bg: "bg-[#fcf8f2]", color: "text-[#b08d57]" },
-    sourire: { id: 'sourire', name: 'Sourire', arabic: 'Sadaqah', icon: Smile, bg: "bg-[#fdf2f2]", color: "text-[#c25e5e]" }
+    savoir: { id: 'savoir', name: 'Savoir-Faire', arabic: '‘Ilm', sub: 'Lecture & Science', icon: BookOpen, bg: "bg-[#f5f0e6]", color: "text-[#8c6b4a]" },
+    solidite: { id: 'solidite', name: 'Solidité', arabic: 'Quwwah', sub: 'Santé & Discipline', icon: Dumbbell, bg: "bg-[#f0f5f1]", color: "text-[#5e8c61]" },
+    serenite: { id: 'serenite', name: 'Sérénité', arabic: 'Sakinah', sub: 'Dhikr & Apaisement', icon: Shield, bg: "bg-[#fcf8f2]", color: "text-[#b08d57]" },
+    sourire: { id: 'sourire', name: 'Sourire', arabic: 'Sadaqah', sub: 'Bienveillance & Famille', icon: Smile, bg: "bg-[#fdf2f2]", color: "text-[#c25e5e]" }
   };
 
   const getScore = (id) => Math.min(pillarActions[id].length, 3);
@@ -1140,7 +1194,7 @@ const ModuleIhsan = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7]">
-      <div className="p-4 border-b border-[#e8dfce] flex justify-between items-center shrink-0">
+      <div className="p-4 border-b border-[#e8dfce] flex justify-between items-center shrink-0 bg-white">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold">Al-Ihsan</p>
           <h1 className="text-xl font-bold text-[#3e2f24]">Mon Équilibre</h1>
@@ -1148,8 +1202,8 @@ const ModuleIhsan = () => {
         <Award size={24} className="text-[#8c6b4a]" />
       </div>
 
-      <div className="flex-1 flex flex-col p-5 justify-between">
-        <div className="bg-white p-4 rounded-3xl border border-[#e8dfce] mb-3 flex flex-col items-center shrink-0 shadow-sm">
+      <div className="flex-1 flex flex-col p-4 justify-between overflow-y-auto">
+        <div className="bg-white p-4 rounded-2xl border border-[#e8dfce] mb-3 flex flex-col items-center shrink-0 shadow-sm">
           <div className="flex items-center justify-between w-full mb-2">
             <div>
               <h3 className="font-sans font-bold text-[#3e2f24] text-xs">{nafs.name}</h3>
@@ -1165,13 +1219,29 @@ const ModuleIhsan = () => {
         <div className="grid grid-cols-2 gap-3 flex-1">
           {Object.values(data).map(d => {
             const score = getScore(d.id);
-            const hasActions = pillarActions[d.id].length > 0;
+            const actions = pillarActions[d.id];
             return (
-              <button key={d.id} onClick={() => handleOpenPillar(d.id)} className={`p-3 rounded-2xl border text-left flex flex-col h-full ${score === 3 ? 'bg-[#fdfbf7] border-[#8c6b4a]' : 'bg-white border-[#e8dfce]'}`}>
-                <div className={`w-8 h-8 rounded-full ${d.bg} flex items-center justify-center mb-2`}><d.icon size={16} className={d.color} /></div>
-                <h4 className="font-bold text-[#3e2f24] text-xs">{d.name}</h4>
-                <div className="mt-auto pt-2 w-full">
-                   {hasActions && <div className="text-[#8c7b68] text-[9px] font-sans font-bold mb-1 flex items-center"><ListChecks size={10} className="mr-1"/> {pillarActions[d.id].length} act.</div>}
+              <button 
+                key={d.id} 
+                onClick={() => handleOpenPillar(d.id)} 
+                className={`p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all shadow-sm hover:shadow-md ${score === 3 ? 'bg-[#fdfbf7] border-[#8c6b4a]' : 'bg-white border-[#e8dfce]'}`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`w-9 h-9 rounded-xl ${d.bg} flex items-center justify-center`}>
+                      <d.icon size={18} className={d.color} />
+                    </div>
+                    <span className="font-serif text-sm font-bold text-[#b08d57]">{d.arabic}</span>
+                  </div>
+                  <h4 className="font-bold text-[#3e2f24] text-xs leading-snug">{d.name}</h4>
+                  <p className="text-[9px] text-[#8c7b68] font-sans mt-0.5">{d.sub}</p>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-[#f2efe9] w-full">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[9px] font-sans font-bold text-[#8c7b68]">{actions.length} action(s)</span>
+                    <span className="text-[9px] font-sans font-bold text-[#8c6b4a]">{score}/3</span>
+                  </div>
                   <div className="flex space-x-1 w-full">
                     {[1, 2, 3].map(lvl => <div key={lvl} className={`h-1 flex-1 rounded-full ${score >= lvl ? 'bg-[#8c6b4a]' : 'bg-[#f5f0e6]'}`} />)}
                   </div>
@@ -1329,15 +1399,22 @@ const masaAdhkar = [
 const ModuleAdhkar = () => {
   const [tab, setTab] = useState('sabah');
   const [counts, setCounts] = useLocalStorage('mindset_hisn_counts', {});
+  const [selectedDua, setSelectedDua] = useState(null);
 
-  const increment = (id) => {
-    setCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+  const increment = (id, target, e) => {
+    if (e) e.stopPropagation();
+    setCounts(prev => {
+      const current = prev[id] || 0;
+      if (current >= target) return prev;
+      if (current + 1 === target) playChime();
+      return { ...prev, [id]: current + 1 };
+    });
   };
 
   const list = tab === 'sabah' ? sabahAdhkar : masaAdhkar;
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7]">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7] relative">
       <div className="p-4 border-b border-[#e8dfce] shrink-0 bg-white">
         <div className="flex justify-between items-center mb-3">
           <div>
@@ -1357,23 +1434,78 @@ const ModuleAdhkar = () => {
           const val = counts[item.id] || 0;
           const isComplete = val >= item.target;
           return (
-            <div key={item.id} onClick={() => increment(item.id)} className={`p-4 rounded-2xl border transition-all cursor-pointer active:scale-95 select-none ${isComplete ? 'bg-[#f4f9f5] border-[#5e8c61]' : 'bg-white border-[#e8dfce]'}`}>
+            <div 
+              key={item.id} 
+              onClick={() => setSelectedDua(item)}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer hover:shadow-md select-none relative ${isComplete ? 'bg-[#f4f9f5] border-[#5e8c61]' : 'bg-white border-[#e8dfce]'}`}
+            >
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-sm text-[#3e2f24]">{item.title}</h3>
-                <span className="text-[9px] font-sans font-bold text-[#b08d57] bg-[#f5f0e6] px-2 py-0.5 rounded-full">{item.source}</span>
+                <span className="text-[9px] font-sans font-bold text-[#b08d57] bg-[#f5f0e6] px-2 py-0.5 rounded-full shrink-0">{item.source}</span>
               </div>
-              <p className="text-right font-serif text-lg text-[#8c6b4a] mb-2 leading-loose">{item.arabic}</p>
-              <p className="text-xs font-sans text-[#7a6a58] italic mb-2 bg-[#fdfbf7] p-2.5 rounded-lg border border-[#f5f0e6] leading-relaxed"><strong className="font-bold text-[#8c6b4a]">Phonétique :</strong> {item.phonetic}</p>
-              <p className="text-xs text-[#8c7b68] mb-3"><strong className="font-bold text-[#4a3f35]">Sens :</strong> « {item.translation} »</p>
+
+              <p className="text-right font-serif text-lg text-[#8c6b4a] mb-2 leading-loose line-clamp-2">{item.arabic}</p>
+              <p className="text-xs font-sans text-[#7a6a58] italic mb-2 bg-[#fdfbf7] p-2.5 rounded-lg border border-[#f5f0e6] leading-relaxed line-clamp-2"><strong className="font-bold text-[#8c6b4a]">Phonétique :</strong> {item.phonetic}</p>
               
               <div className="flex justify-between items-center pt-2 border-t border-[#f2efe9]">
-                <span className="text-[10px] font-sans font-bold uppercase text-[#a99c8f]">Objectif : {item.target} fois</span>
-                <span className={`font-sans font-extrabold text-base ${isComplete ? 'text-[#5e8c61]' : 'text-[#3e2f24]'}`}>{val} / {item.target}</span>
+                <span className="text-[10px] font-sans font-bold text-[#8c6b4a] underline">Cliquer pour lire en grand</span>
+                
+                <button 
+                  onClick={(e) => increment(item.id, item.target, e)}
+                  disabled={isComplete}
+                  className={`px-3 py-1 rounded-xl font-sans font-bold text-xs flex items-center space-x-1.5 transition-all ${isComplete ? 'bg-[#5e8c61] text-white cursor-default' : 'bg-[#8c6b4a] text-white hover:bg-[#7a5c3f] active:scale-95'}`}
+                >
+                  {isComplete ? <Check size={14} /> : <Plus size={14} />}
+                  <span>{val} / {item.target}</span>
+                </button>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Modal d'affichage complet pour débutant */}
+      {selectedDua && (
+        <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-[#fdfbf7] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 border border-[#e8dfce] shadow-2xl max-h-[90vh] flex flex-col animate-fade-in">
+            <div className="flex justify-between items-center pb-3 border-b border-[#e8dfce] shrink-0">
+              <div>
+                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-[#8c6b4a]">{selectedDua.source}</span>
+                <h3 className="font-bold text-base text-[#3e2f24]">{selectedDua.title}</h3>
+              </div>
+              <button onClick={() => setSelectedDua(null)} className="w-8 h-8 rounded-full bg-[#f5f0e6] text-[#8c7b68] flex items-center justify-center font-bold">✕</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-4 space-y-4 font-serif">
+              <div className="bg-white p-4 rounded-2xl border border-[#e8dfce]">
+                <p className="text-right font-serif text-xl leading-loose text-[#8c6b4a] dir-rtl">{selectedDua.arabic}</p>
+              </div>
+
+              <div className="bg-[#f5f0e6] p-4 rounded-2xl border border-[#e8dfce]">
+                <p className="text-xs font-sans font-bold text-[#8c6b4a] uppercase mb-1">Prononciation Phonétique :</p>
+                <p className="text-xs font-sans text-[#4a3f35] italic leading-relaxed">{selectedDua.phonetic}</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-[#e8dfce]">
+                <p className="text-xs font-sans font-bold text-[#3e2f24] uppercase mb-1">Traduction & Sens :</p>
+                <p className="text-xs text-[#6b5a48] leading-relaxed">« {selectedDua.translation} »</p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[#e8dfce] shrink-0 flex items-center justify-between">
+              <span className="text-xs font-sans font-bold text-[#8c7b68]">Objectif : {selectedDua.target} fois</span>
+              <button 
+                onClick={(e) => increment(selectedDua.id, selectedDua.target, e)}
+                disabled={(counts[selectedDua.id] || 0) >= selectedDua.target}
+                className={`px-5 py-2.5 rounded-xl font-sans font-bold text-sm flex items-center space-x-2 transition-all ${(counts[selectedDua.id] || 0) >= selectedDua.target ? 'bg-[#5e8c61] text-white' : 'bg-[#8c6b4a] text-white hover:bg-[#7a5c3f]'}`}
+              >
+                {(counts[selectedDua.id] || 0) >= selectedDua.target ? <Check size={16} /> : <Plus size={16} />}
+                <span>{(counts[selectedDua.id] || 0)} / {selectedDua.target}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1437,7 +1569,7 @@ const App = () => {
     { id: 'ihsan', label: 'Équilibre', icon: LayoutDashboard },
     { id: 'muhasabah', label: 'Bilan', icon: Scale },
     { id: 'sabr', label: 'Résilience', icon: Compass },
-    { id: 'adhkar', label: 'Hisn al-Muslim', icon: Sparkles }
+    { id: 'adhkar', label: 'Hisn', icon: Sparkles }
   ];
 
   const renderModule = () => {
@@ -1470,12 +1602,12 @@ const App = () => {
         .theme-sombre .bg-\\[\\#fdfbf7\\] { background-color: #222228 !important; }
         .theme-sombre .bg-white { background-color: #2c2c34 !important; }
         .theme-sombre.text-\\[\\#4a3f35\\], .theme-sombre .text-\\[\\#4a3f35\\] { color: #d1d1d6 !important; }
-        .theme-sombre .text-\\[\\#3e2f24\\] { color: #f5f5f7 !important; }
+        .theme-sombre .text-\\[\\#3e2f24\\], .theme-sombre .text-\\[\\#2a1f18\\] { color: #f5f5f7 !important; }
         .theme-sombre .text-\\[\\#6b5a48\\] { color: #a1a1aa !important; }
         .theme-sombre .text-\\[\\#8c7b68\\] { color: #82828c !important; }
         .theme-sombre .border-\\[\\#e8dfce\\] { border-color: #3f3f4a !important; }
         .theme-sombre .border-\\[\\#f5f0e6\\] { border-color: #2c2c34 !important; }
-        .theme-sombre .stroke-\\[\\#8c6b4a\\] { stroke: #8a8aa3 !important; }
+        .theme-sombre .stroke-\\[\\#8c6b4a\\] { stroke: #b08d57 !important; }
       `}</style>
 
       <div className="bg-[#fdfbf7] w-full max-w-md sm:rounded-[2.5rem] shadow-2xl overflow-hidden border-0 sm:border-4 border-[#e8dfce] relative h-full sm:h-[850px] sm:max-h-[95vh] flex flex-col">
@@ -1491,8 +1623,8 @@ const App = () => {
           {renderModule()}
         </div>
 
-        <div className="h-16 bg-white border-t border-[#e8dfce] shrink-0 flex items-center px-2 pb-1 z-50 overflow-x-auto">
-          <div className="flex w-full justify-around min-w-[480px]">
+        <div className="h-16 bg-white border-t border-[#e8dfce] shrink-0 z-50">
+          <div className="grid grid-cols-6 h-full w-full">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
@@ -1500,13 +1632,13 @@ const App = () => {
                 <button 
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-col items-center justify-center px-3 h-full transition-all duration-300 ${isActive ? 'text-[#8c6b4a]' : 'text-[#a99c8f] hover:bg-[#f5f0e6] rounded-xl'}`}
+                  className={`flex flex-col items-center justify-center h-full transition-all duration-200 ${isActive ? 'text-[#8c6b4a]' : 'text-[#a99c8f] hover:text-[#8c6b4a]'}`}
                 >
-                  <div className={`relative flex items-center justify-center transition-transform duration-300 ${isActive ? '-translate-y-1' : ''}`}>
-                    <Icon size={isActive ? 20 : 18} strokeWidth={isActive ? 2 : 1.5} />
-                    {isActive && <span className="absolute -bottom-2 w-1 h-1 rounded-full bg-[#8c6b4a]"></span>}
+                  <div className={`relative flex items-center justify-center transition-transform duration-200 ${isActive ? '-translate-y-0.5' : ''}`}>
+                    <Icon size={18} strokeWidth={isActive ? 2.5 : 1.5} />
+                    {isActive && <span className="absolute -bottom-1.5 w-1 h-1 rounded-full bg-[#8c6b4a]"></span>}
                   </div>
-                  <span className={`text-[8px] font-sans font-bold uppercase mt-1 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+                  <span className={`text-[8px] font-sans font-bold uppercase mt-1 tracking-tighter transition-all duration-200 ${isActive ? 'opacity-100 font-extrabold' : 'opacity-70'}`}>
                     {tab.label}
                   </span>
                 </button>
