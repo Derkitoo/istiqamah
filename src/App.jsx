@@ -626,6 +626,14 @@ const ModuleIstiqamah = () => {
     setTimeline(timeline.map(item => item.id === id ? { ...item, completed: !item.completed } : item));
   };
 
+  const deleteCustomHabit = (id) => {
+    setTimeline(timeline.filter(item => item.id !== id));
+  };
+
+  const resetTodayHabits = () => {
+    setTimeline(timeline.map(item => ({ ...item, completed: false })));
+  };
+
   const handleAddCustomHabit = (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -652,15 +660,24 @@ const ModuleIstiqamah = () => {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#fdfbf7] relative">
       <div className="p-4 border-b border-[#e8dfce] shrink-0 bg-white relative flex items-center justify-between">
-        <button onClick={() => setIsAdding(true)} className="p-2 bg-[#f5f0e6] text-[#8c6b4a] rounded-full hover:bg-[#e8dfce] transition-colors"><Plus size={18}/></button>
+        <div className="flex items-center space-x-2">
+          <button onClick={() => setIsAdding(true)} className="p-2 bg-[#f5f0e6] text-[#8c6b4a] rounded-full hover:bg-[#e8dfce] transition-colors" title="Ajouter une habitude"><Plus size={18}/></button>
+          {score > 0 && (
+            <button onClick={resetTodayHabits} className="p-2 text-[#8c7b68] hover:bg-[#f5f0e6] rounded-full transition-colors" title="Réinitialiser la journée">
+              <RefreshCw size={14} />
+            </button>
+          )}
+        </div>
+        
         <div className="text-center flex-1 px-2">
           <p className="text-[10px] uppercase tracking-widest text-[#8c6b4a] font-sans font-bold mb-1">Al-Istiqamah</p>
           <h1 className="text-lg font-bold text-[#3e2f24]">Timeline Prophétique</h1>
         </div>
+        
         <div className="w-10 h-10 rounded-full border-4 border-[#e8dfce] flex items-center justify-center relative shrink-0">
-           <svg className="absolute inset-0 w-full h-full -rotate-90">
-              <circle cx="16" cy="16" r="16" stroke="transparent" strokeWidth="4" fill="none" />
-              <circle cx="16" cy="16" r="16" stroke="#5e8c61" strokeWidth="4" fill="none" strokeDasharray="100" strokeDashoffset={100 - progress} className="transition-all duration-500" />
+           <svg viewBox="0 0 36 36" className="absolute inset-0 w-full h-full -rotate-90">
+              <circle cx="18" cy="18" r="14" stroke="transparent" strokeWidth="3" fill="none" />
+              <circle cx="18" cy="18" r="14" stroke="#5e8c61" strokeWidth="3" fill="none" strokeDasharray="88" strokeDashoffset={88 - (progress / 100) * 88} className="transition-all duration-500" />
            </svg>
            <span className="font-sans font-bold text-[10px] text-[#3e2f24] relative z-10">{score}/{timeline.length}</span>
          </div>
@@ -684,7 +701,14 @@ const ModuleIstiqamah = () => {
                 <div className={`ml-4 flex-1 bg-white p-4 rounded-2xl border transition-all duration-300 ${item.completed ? 'border-[#5e8c61] bg-[#f9fbf9]' : 'border-[#e8dfce]'}`}>
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-sm text-[#3e2f24]">{item.title}</h3>
-                    <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#a99c8f] bg-[#f5f0e6] px-2 py-0.5 rounded-full">{item.time}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#a99c8f] bg-[#f5f0e6] px-2 py-0.5 rounded-full">{item.time}</span>
+                      {!item.isSunnah && (
+                        <button onClick={() => deleteCustomHabit(item.id)} className="p-1 text-[#c25e5e] hover:bg-[#fff5f5] rounded-full transition-colors" title="Supprimer">
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-xs text-[#8c7b68] leading-snug">{item.desc}</p>
                   {item.isSunnah && (
